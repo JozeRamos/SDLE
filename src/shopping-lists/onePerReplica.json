@@ -1,0 +1,18 @@
+{
+    "listId": "unique-list-identifier",
+    "replicaId": "unique-replica-identifier",
+    "listName": "Shopping List Name",
+    "items": {
+      "item1": {
+        "itemName": "Item 1 Name",
+        "desiredQuantity": 3,
+        "quantityBought": 0
+      },
+      "item2": {
+        "itemName": "Item 2 Name",
+        "desiredQuantity": 2,
+        "quantityBought": 1
+      }
+    }
+  }
+  
