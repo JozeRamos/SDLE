@@ -1,0 +1,33 @@
+{
+    "listId": "unique-list-identifier",
+    "listName": "Shopping List Name",
+    "items": {
+        "item1": {
+            "itemName": "Item 1 Name",
+            "desiredQuantity": {
+            "replica1": 3,
+            "replica2": 2,
+            "replica3": 1
+            },
+            "quantityBought": {
+            "replica1": 0,
+            "replica2": 1,
+            "replica3": 1
+            }
+        },
+        "item2": {
+            "itemName": "Item 2 Name",
+            "desiredQuantity": {
+            "replica1": 2,
+            "replica2": 2,
+            "replica3": 2
+            },
+            "quantityBought": {
+            "replica1": 1,
+            "replica2": 2,
+            "replica3": 2
+            }
+        }
+    }
+  }
+  

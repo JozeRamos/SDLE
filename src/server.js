@@ -15,22 +15,25 @@ app.listen(port, () => {
 });
 
 // define routes for handling shopping lists, reading/writing JSON files, and managing clients' data.
+// Define models, routes, and controllers for your application        --> this needs to be before the app.listen() call
+//const shoppingListRoutes = require('./routes/shoppingListRoutes');
+//app.use('/api/shopping-lists', shoppingListRoutes);
 
-// For handling JSON Files:
-/*const fs = require('fs');
-
-// Read JSON file
-const data = fs.readFileSync('shopping-lists/main.json', 'utf8');
-const shoppingList = JSON.parse(data);
-
-// Write to JSON file
-fs.writeFileSync('shopping-lists/main.json', JSON.stringify(shoppingList, null, 2));*/
 
 
 
 // CRUD Operations Implementation
 //In the routes, implement Create, Read, Update, and Delete (CRUD) operations for managing shopping lists
 //For example, create routes like /api/lists, /api/lists/:clientId, and so on
+
+
+
+
+// For handling JSON Files:
+/*const fs = require('fs');
+const data = fs.readFileSync('shopping-lists/main.json', 'utf8'); // read from JSON File
+const shoppingList = JSON.parse(data);
+fs.writeFileSync('shopping-lists/main.json', JSON.stringify(shoppingList, null, 2)); // write to JSON File*/
 
 
 // Testing 
