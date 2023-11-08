@@ -1,19 +1,3 @@
-/*const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const port = 3000;
-
-app.use(bodyParser.json());
-
-// Serve static files from the 'public' directory
-app.use(express.static('public'));
-
-// Define routes and server-side logic here
-
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});*/
-
 // define routes for handling shopping lists, reading/writing JSON files, and managing clients' data.
 // Define models, routes, and controllers for your application        --> this needs to be before the app.listen() call
 //const shoppingListRoutes = require('./routes/shoppingListRoutes');
