@@ -2,7 +2,7 @@
 
 ### Some notes considering future work:
 - define routes for handling shopping lists, reading/writing JSON files, and managing clients' data.
-- See notes on server.js about the file management, operations and routes to be implemented.
+- See notes on index.js about the file management, operations and routes to be implemented.
 
 #### Node Dependencies
 The files package.json and package-lock.json specify the dependencies of the project. To install them, run the following command:
