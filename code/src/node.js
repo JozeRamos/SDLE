@@ -1,55 +1,55 @@
+import express from 'express';
+import bodyParser from 'body-parser';
+import fs from 'fs';
 
 export class Node {
-    async init(port) {
-        const express = require('express');
-        const bodyParser = require('body-parser');
-        const app = express();
-        const port = 3000;
+  constructor() {
+    this.app = express();
+  }
 
-        app.use(bodyParser.json());
-        app.use(express.static('public'));
-        app.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
-        });
+  async init(port) {
+    this.app.use(bodyParser.json());
+    this.app.use(express.static('public'));
 
-        executeShoppingList();
-    }
+    this.app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+      this.executeShoppingList(port);
+    });
+  }
 
-    executeShoppingList() {
-        const jsonFilePath = path.join(__dirname, 'shopping-lists', 'onePerReplica.json');
+  executeShoppingList(port) {
+    const jsonFilePath = './shopping-lists/onePerReplica.json';
 
-        app.use(express.static('public'));
-        app.use(express.json()); // Middleware to parse JSON data
+    this.app.use(express.static('public'));
+    this.app.use(express.json());
 
-        // Read the initial JSON data from the file
-        let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+    let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
 
-        app.get('/api/shopping-list', (req, res) => {
-        res.json(shoppingListData);
-        });
+    this.app.get('/api/shopping-list', (req, res) => {
+      res.json(shoppingListData);
+    });
 
-        app.post('/update-list', (req, res) => {
-        // Extract the name, desiredQuantity, and quantityBought from the request body
+    // Inside your '/update-list' route
+    this.app.post('/update-list', (req, res) => {
         const { name, desiredQuantity, quantityBought } = req.body;
 
-        // Check if the item exists in the shopping list data
-        if (shoppingListData.items[name]) {
-            // If the item exists, update its quantities
-            shoppingListData.items[name].desiredQuantity = desiredQuantity;
-            shoppingListData.items[name].quantityBought = quantityBought;
+        // Convert item name to lowercase
+        const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const lowercaseName = normalizedStr.toLowerCase();
+
+        if (shoppingListData.items[lowercaseName]) {
+            shoppingListData.items[lowercaseName].desiredQuantity = desiredQuantity;
+            shoppingListData.items[lowercaseName].quantityBought = quantityBought;
         } else {
-            // If the item is new, add it to the shopping list
-            shoppingListData.items[name] = { itemName: name, desiredQuantity, quantityBought };
+            shoppingListData.items[lowercaseName] = { itemName: lowercaseName, desiredQuantity, quantityBought };
         }
 
-        // Save the updated data to the JSON file
         fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingListData, null, 2), 'utf8');
 
         res.json({ message: 'List updated successfully' });
-        });
+    });
 
-        app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-        });
-    }
+
+    console.log(`Server is running on port ${port}`);
+  }
 }

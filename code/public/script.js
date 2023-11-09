@@ -5,10 +5,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
 
-    // Function to create a list item and add it to the shopping list
     function addListItem(name, desiredQuantity) {
+        // Convert the name to lowercase for comparison
+        const lowercaseName = name.toLowerCase();
+    
         // Check if an item with the same name already exists
-        const existingItem = Array.from(shoppingList.children).find(item => item.dataset.name === name);
+        const existingItem = Array.from(shoppingList.children).find(item => item.dataset.name.toLowerCase() === lowercaseName);
     
         if (existingItem) {
             // If an item with the same name exists, update its quantity
@@ -16,19 +18,21 @@ document.addEventListener("DOMContentLoaded", function() {
             const newQuantity = existingQuantity + desiredQuantity;
             existingItem.dataset.quantity = newQuantity;
             existingItem.querySelector(".quantity").textContent = newQuantity; // Update the quantity in the span
-            updateQuantity(name, newQuantity);
+            updateQuantity(lowercaseName, newQuantity);
         } else {
             // If no item with the same name exists, create a new list item
             const listItem = document.createElement("li");
-            listItem.dataset.name = name;
+            listItem.dataset.name = lowercaseName; // Save the lowercase name in the dataset
             listItem.dataset.quantity = desiredQuantity;
+            updateQuantity(lowercaseName, desiredQuantity);
     
             // Create a span to display the quantity
             const quantitySpan = document.createElement("span");
             quantitySpan.textContent = desiredQuantity;
             quantitySpan.className = "quantity";
     
-            listItem.textContent = `${name} (Desired Quantity: `;
+            const capitalizedDisplayName = capitalizeFirstLetter(name);
+            listItem.textContent = `${capitalizedDisplayName} (Desired Quantity: `;
     
             // Create buttons to update the quantity
             const increaseButton = document.createElement("button");
@@ -41,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 desiredQuantity++;
                 listItem.dataset.quantity = desiredQuantity;
                 quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                updateQuantity(name, desiredQuantity);
+                updateQuantity(lowercaseName, desiredQuantity);
             });
     
             decreaseButton.addEventListener("click", function() {
@@ -50,10 +54,10 @@ document.addEventListener("DOMContentLoaded", function() {
     
                 if (desiredQuantity === 0) {
                     shoppingList.removeChild(listItem); // Remove item if quantity is 0
-                    updateQuantity(name, 0);
+                    updateQuantity(lowercaseName, 0);
                 } else {
                     quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                    updateQuantity(name, desiredQuantity);
+                    updateQuantity(lowercaseName, desiredQuantity);
                 }
             });
     
@@ -63,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
             listItem.appendChild(decreaseButton);
             shoppingList.appendChild(listItem);
         }
-    }
+    }    
     
 
     // Function to update the quantity on the server
@@ -103,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 desiredQuantity = 1;
             } else {
                 desiredQuantity = parseInt(desiredQuantity);
-                if (isNaN(desiredQuantity)) {
+                if (isNaN(desiredQuantity) || desiredQuantity < 1) {
                     // Invalid quantity, set it to 1
                     desiredQuantity = 1;
                 }
@@ -117,6 +121,41 @@ document.addEventListener("DOMContentLoaded", function() {
             desiredQuantityInput.value = "";
         }
     });
+
+    function fetchInitialData() {
+        fetch('/api/shopping-list')
+            .then(response => response.json())
+            .then(data => {
+                for (const itemName in data.items) {
+                    const desiredQuantity = data.items[itemName].desiredQuantity;
+    
+                    // Skip rendering items with a quantity of 0
+                    if (desiredQuantity > 0) {
+                        const capitalizedItemName = capitalizeFirstLetter(itemName);
+                        addListItem(capitalizedItemName, desiredQuantity);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching initial data:', error);
+            });
+    }
+    
+    function capitalizeFirstLetter(str) {
+        // Convert special characters to their standard counterparts
+        const normalizedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+        // Capitalize the first letter of each word
+        const capitalizedStr = normalizedStr.replace(/\b\w/g, c => c.toUpperCase());
+    
+        return capitalizedStr;
+    }
+    
+    
+    
+
+    // Call the function to fetch and display the initial data when the page loads
+    fetchInitialData();
 
     // Add event listener to the input fields for pressing Enter key
     nameInput.addEventListener("keypress", handleEnterKey);
