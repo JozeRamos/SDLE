@@ -21,36 +21,37 @@ export class Node {
 
   executeShoppingList(port) {
     const jsonFilePath = './shopping-lists/onePerReplica.json';
-    const shoppingList = new ShoppingList('onePerReplica', []);
-  
-    // Load the shopping list from the JSON file
-    shoppingList.loadShoppingList();
-  
+
     this.app.use(express.static('public'));
     this.app.use(express.json());
-  
+
+    let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+
     this.app.get('/api/shopping-list', (req, res) => {
-      // Send the shopping list data as JSON
-      res.json(shoppingList.getData());
+      res.json(shoppingListData);
     });
-  
+
+    // Inside your '/update-list' route
     this.app.post('/update-list', (req, res) => {
-      const { name, desiredQuantity, quantityBought } = req.body;
-  
-      // Lógica para percorrer os itens da lista, atualizar o item relevante e salvar a lista
-      const updated = shoppingList.updateItem(new Item(name, desiredQuantity, quantityBought));
-  
-      if (updated) {
-        // Salvar a lista atualizada
-        fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingList.getData(), null, 2), 'utf8');
+        const { name, desiredQuantity, quantityBought } = req.body;
+
+        // Convert item name to lowercase
+        const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const lowercaseName = normalizedStr.toLowerCase();
+
+        if (shoppingListData.items[lowercaseName]) {
+            shoppingListData.items[lowercaseName].desiredQuantity = desiredQuantity;
+            shoppingListData.items[lowercaseName].quantityBought = quantityBought;
+        } else {
+            shoppingListData.items[lowercaseName] = { itemName: lowercaseName, desiredQuantity, quantityBought };
+        }
+
+        fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingListData, null, 2), 'utf8');
+
         res.json({ message: 'List updated successfully' });
-      } else {
-        res.status(400).json({ message: 'Item not found in the shopping list' });
-      }
     });
-  
-    this.app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-    });
+
+
+    console.log(`Server is running on port ${port}`);
   }
-}  
+}

@@ -1,7 +1,3 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import fs from 'fs';
-
 export class Item {
     constructor(name, desiredQuantity, acquiredQuantity) {
         this.name = name;
