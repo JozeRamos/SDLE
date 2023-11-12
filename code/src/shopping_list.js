@@ -9,6 +9,13 @@ export class ShoppingList {
         this.itemsList = initialList;
     }
 
+    loadShoppingList() {
+        const loadedList = ShoppingList.loadShoppingList(this.code);
+        if (loadedList) {
+          this.itemsList = loadedList.itemsList;
+        }
+      }
+
     addItem(item) {
         const existingItem = this.getItemByName(item.name);
 
@@ -78,4 +85,16 @@ export class ShoppingList {
 
         return new ShoppingList(code, items);
     }
+
+    updateItem(item) {
+        const existingItemIndex = this.itemsList.findIndex(i => i.name === item.name);
+    
+        if (existingItemIndex !== -1) {
+          // Update the existing item
+          this.itemsList[existingItemIndex] = item;
+        } else {
+          // Add the item to the list if it doesn't exist
+          this.itemsList.push(item);
+        }
+      }
 }

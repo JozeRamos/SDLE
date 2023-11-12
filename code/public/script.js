@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", function() {
     // Get references to the HTML elements
     const shoppingList = document.getElementById("shopping-list");

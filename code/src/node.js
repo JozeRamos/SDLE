@@ -21,6 +21,11 @@ export class Node {
 
   executeShoppingList(port) {
     const jsonFilePath = './shopping-lists/onePerReplica.json';
+    const shoppingList = new ShoppingList('onePerReplica', []);
+
+    // Load the shopping list from the JSON file
+    shoppingList.loadShoppingList()
+
 
     this.app.use(express.static('public'));
     this.app.use(express.json());
@@ -28,45 +33,25 @@ export class Node {
     let shoppingListData = {};
 
 
-    // Assuming the URL will be like '/api/shopping-list/:code'
-    this.app.get('/api/shopping-list/:code', (req, res) => {
-      const code = req.params.code;
-      const shoppingList = ShoppingList.loadShoppingList(code);
-  
-      if (shoppingList) {
-          res.json(shoppingList.getItems());
-      } else {
-          res.status(404).json({ error: 'Shopping list not found' });
-      }
-  });
+    this.app.get('/api/shopping-list', (req, res) => {
+      // Send the shopping list data as JSON
+      res.json(shoppingList.getData());
+    });
   
 
-    // Inside your '/update-list/:code' route
-        this.app.post('/update-list/:code', (req, res) => {
-            const code = req.params.code;
-            const shoppingList = ShoppingList.loadShoppingList(code);
+    this.app.post('/update-list', (req, res) => {
+      const { name, desiredQuantity, quantityBought } = req.body;
 
-            if (!shoppingList) {
-                res.status(404).json({ error: 'Shopping list not found' });
-                return;
-            }
+      // Use the ShoppingList and Item classes to update quantities
+      const item = new Item(name, desiredQuantity, quantityBought);
+      shoppingList.updateItem(item);
 
-            const { name, desiredQuantity, quantityBought } = req.body;
-            const item = shoppingList.getItemByName(name);
+      // Store the updated shopping list
+      shoppingList.storeShoppingList();
 
-            if (item) {
-                item.changeDesiredQuantity(desiredQuantity);
-                item.changeAcquiredQuantity(quantityBought);
-            } else {
-                const newItem = new Item(name, desiredQuantity, quantityBought);
-                shoppingList.addItem(newItem);
-            }
-
-            shoppingList.storeShoppingList();
-            res.json({ message: 'List updated successfully' });
-        });
-
-
+      res.json({ message: 'List updated successfully' });
+    });
+    
     console.log(`Server is running on port ${port}`);
   }
 }
