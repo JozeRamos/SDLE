@@ -5,15 +5,23 @@
   "items": {
     "banana": {
       "itemName": "banana",
-      "desiredQuantity": 5
+      "desiredQuantity": 13
     },
     "laranja": {
       "itemName": "laranja",
-      "desiredQuantity": 6
+      "desiredQuantity": 7
     },
     "maca": {
       "itemName": "maca",
       "desiredQuantity": 3
+    },
+    "new banana": {
+      "itemName": "new banana",
+      "desiredQuantity": 24
+    },
+    "baba": {
+      "itemName": "baba",
+      "desiredQuantity": 2
     }
   }
 }
