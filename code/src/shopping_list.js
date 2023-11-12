@@ -83,25 +83,4 @@ export class ShoppingList {
         // - Load Balance
         // - Replication
     }
-
-    static loadShoppingList(code) {
-        // load the shopping list from a JSON file with the code as the name
-        const folderName = 'shopping-lists';
-        const fileName = `${code}.json`;
-        const filePath = path.join('..', folderName, fileName);
-
-        if (!fs.existsSync(filePath)) {
-            console.log(`Shopping list with code ${code} does not exist`);
-            return null;
-        }
-
-        const data = fs.readFileSync(filePath, 'utf8');
-        const items = JSON.parse(data);
-
-        // change this function to load the shopping list considering the functionalities we need to implement
-        // - Load Balance
-        // - Replication
-
-        return new ShoppingList(code, items);
-    }
 }
