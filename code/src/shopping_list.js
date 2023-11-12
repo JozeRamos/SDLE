@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import { Item } from './item.js';
+import path from 'path';
 
 export class ShoppingList {
     constructor(code, initialList) {
