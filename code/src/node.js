@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
+import { Item } from './item.js';
+import { ShoppingList } from './shopping_list.js';
 
 export class Node {
   constructor() {
@@ -23,31 +25,46 @@ export class Node {
     this.app.use(express.static('public'));
     this.app.use(express.json());
 
-    let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+    let shoppingListData = {};
 
-    this.app.get('/api/shopping-list', (req, res) => {
-      res.json(shoppingListData);
-    });
 
-    // Inside your '/update-list' route
-    this.app.post('/update-list', (req, res) => {
-        const { name, desiredQuantity, quantityBought } = req.body;
+    // Assuming the URL will be like '/api/shopping-list/:code'
+    this.app.get('/api/shopping-list/:code', (req, res) => {
+      const code = req.params.code;
+      const shoppingList = ShoppingList.loadShoppingList(code);
+  
+      if (shoppingList) {
+          res.json(shoppingList.getItems());
+      } else {
+          res.status(404).json({ error: 'Shopping list not found' });
+      }
+  });
+  
 
-        // Convert item name to lowercase
-        const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const lowercaseName = normalizedStr.toLowerCase();
+    // Inside your '/update-list/:code' route
+        this.app.post('/update-list/:code', (req, res) => {
+            const code = req.params.code;
+            const shoppingList = ShoppingList.loadShoppingList(code);
 
-        if (shoppingListData.items[lowercaseName]) {
-            shoppingListData.items[lowercaseName].desiredQuantity = desiredQuantity;
-            shoppingListData.items[lowercaseName].quantityBought = quantityBought;
-        } else {
-            shoppingListData.items[lowercaseName] = { itemName: lowercaseName, desiredQuantity, quantityBought };
-        }
+            if (!shoppingList) {
+                res.status(404).json({ error: 'Shopping list not found' });
+                return;
+            }
 
-        fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingListData, null, 2), 'utf8');
+            const { name, desiredQuantity, quantityBought } = req.body;
+            const item = shoppingList.getItemByName(name);
 
-        res.json({ message: 'List updated successfully' });
-    });
+            if (item) {
+                item.changeDesiredQuantity(desiredQuantity);
+                item.changeAcquiredQuantity(quantityBought);
+            } else {
+                const newItem = new Item(name, desiredQuantity, quantityBought);
+                shoppingList.addItem(newItem);
+            }
+
+            shoppingList.storeShoppingList();
+            res.json({ message: 'List updated successfully' });
+        });
 
 
     console.log(`Server is running on port ${port}`);

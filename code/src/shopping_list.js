@@ -10,7 +10,28 @@ export class ShoppingList {
     }
 
     addItem(item) {
-        this.itemsList.push(item);
+        const existingItem = this.getItemByName(item.name);
+
+        if (existingItem) {
+            existingItem.changeDesiredQuantity(item.desiredQuantity);
+            existingItem.changeAcquiredQuantity(item.acquiredQuantity);
+        } else {
+            this.itemsList.push(item);
+        }
+    }
+
+    getItemByName(name) {
+        return this.itemsList.find((item) => item.name === name);
+    }
+
+    getItems() {
+        return this.itemsList.map((item) => {
+            return {
+                name: item.name,
+                desiredQuantity: item.desiredQuantity,
+                acquiredQuantity: item.acquiredQuantity
+            };
+        });
     }
 
     removeItem(item) {

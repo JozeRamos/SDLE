@@ -122,24 +122,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    function fetchInitialData() {
-        fetch('/api/shopping-list')
-            .then(response => response.json())
-            .then(data => {
-                for (const itemName in data.items) {
-                    const desiredQuantity = data.items[itemName].desiredQuantity;
+    async function fetchInitialData() {
+        try {
+            const response = await fetch('/api/shopping-list');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch shopping list. Status: ${response.status}`);
+            }
     
-                    // Skip rendering items with a quantity of 0
-                    if (desiredQuantity > 0) {
-                        const capitalizedItemName = capitalizeFirstLetter(itemName);
-                        addListItem(capitalizedItemName, desiredQuantity);
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching initial data:', error);
-            });
+            const data = await response.json();
+    
+            for (const item of data.items) {
+                const capitalizedItemName = capitalizeFirstLetter(item.name);
+                addListItem(capitalizedItemName, item.desiredQuantity);
+            }
+        } catch (error) {
+            console.error('Error fetching initial data:', error);
+        }
     }
+    
     
     function capitalizeFirstLetter(str) {
         // Convert special characters to their standard counterparts
