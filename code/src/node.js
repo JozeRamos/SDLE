@@ -1,13 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { Item } from './item.js';
-import { ShoppingList } from './shopping_list.js';
 
 export class Node {
   constructor() {
     this.app = express();
-    this.shoppingList = new ShoppingList([]);
   }
 
   async init(port) {
@@ -26,14 +23,10 @@ export class Node {
     this.app.use(express.static('public'));
     this.app.use(express.json());
 
-    //let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
-
-    /*this.app.get('/api/shopping-list', (req, res) => {
-      res.json(shoppingListData);
-    });*/
+    let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
 
     this.app.get('/api/shopping-list', (req, res) => {
-      res.json({ items: this.shoppingList.getList() });
+      res.json(shoppingListData);
     });
 
     // Inside your '/update-list' route
@@ -41,7 +34,7 @@ export class Node {
         const { name, desiredQuantity, quantityBought } = req.body;
 
         // Convert item name to lowercase
-        /*const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const lowercaseName = normalizedStr.toLowerCase();
 
         if (shoppingListData.items[lowercaseName]) {
@@ -49,13 +42,9 @@ export class Node {
             shoppingListData.items[lowercaseName].quantityBought = quantityBought;
         } else {
             shoppingListData.items[lowercaseName] = { itemName: lowercaseName, desiredQuantity, quantityBought };
-        }*/
+        }
 
-        this.shoppingList.updateItemQuantities(name, desiredQuantity, acquiredQuantity);
-
-
-        fs.writeFileSync(jsonFilePath, JSON.stringify({ items: this.shoppingList.getList() }, null, 2), 'utf8');
-
+        fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingListData, null, 2), 'utf8');
 
         res.json({ message: 'List updated successfully' });
     });
