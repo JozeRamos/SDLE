@@ -9,15 +9,15 @@ export class Item {
         this.acquiredQuantity = acquiredQuantity;
     }
 
-    ChangeName(newName) {
+    changeName(newName) {
         this.name = newName;
     }
 
-    ChangeDesiredQuantity(newDesiredQuantity) {
+    changeDesiredQuantity(newDesiredQuantity) {
         this.desiredQuantity = newDesiredQuantity;
     }
 
-    ChangeDesiredQuantity(newAcquiredQuantity) {
+    changeAcquiredQuantity(newAcquiredQuantity) {
         this.acquiredQuantity = newAcquiredQuantity;
     }
 }
