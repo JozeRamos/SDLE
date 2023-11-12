@@ -3,7 +3,8 @@ import bodyParser from 'body-parser';
 import fs from 'fs';
 
 export class ShoppingList {
-    constructor(initialList) {
+    constructor(code, initialList) {
+        this.code = code;
         this.itemsList = initialList;
     }
 
