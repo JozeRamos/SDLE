@@ -18,28 +18,26 @@ export class ShoppingList {
     }
 
     storeShoppingList() {
-        // store the shopping list in a JSON file with the code as the name
-        const folderName = 'shopping-lists';
+        const folderName = 'shopping-lists/';
+        const data = this.itemsList.map(item => ({
+            name: item.name,
+            desiredQuantity: item.desiredQuantity,
+            acquiredQuantity: item.acquiredQuantity,
+        }));
         const fileName = `${this.code}.json`;
         const filePath = path.join('..', folderName, fileName);
-        const data = JSON.stringify(this.itemsList, null, 2);
 
         // Make sure the folder exists, create if not
         if (!fs.existsSync(path.join('..', folderName))) {
             fs.mkdirSync(path.join('..', folderName));
         }
 
-        fs.writeFileSync(filePath, data, 'utf8');
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
         console.log(`Shopping list stored in ${filePath}`);
-
-        // change this function to store the shopping list considering the functionalities we need to implement
-        // - Load Balance
-        // - Replication
     }
 
     static loadShoppingList(code) {
-        // load the shopping list from a JSON file with the code as the name
-        const folderName = 'shopping-lists';
+        const folderName = 'shopping-lists/';
         const fileName = `${code}.json`;
         const filePath = path.join('..', folderName, fileName);
 
@@ -48,12 +46,12 @@ export class ShoppingList {
             return null;
         }
 
-        const data = fs.readFileSync(filePath, 'utf8');
-        const items = JSON.parse(data);
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-        // change this function to load the shopping list considering the functionalities we need to implement
-        // - Load Balance
-        // - Replication
+        // Convert data back to Item instances
+        const items = data.map(itemData => new Item(itemData.name, itemData.desiredQuantity, itemData.acquiredQuantity));
+
+        // Implement additional functionalities (Load Balance, Replication) if needed
 
         return new ShoppingList(code, items);
     }

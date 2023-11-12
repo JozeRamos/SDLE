@@ -5,7 +5,7 @@
   "items": {
     "banana": {
       "itemName": "banana",
-      "desiredQuantity": 5
+      "desiredQuantity": 6
     },
     "laranja": {
       "itemName": "laranja",
