@@ -126,14 +126,17 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch('/api/shopping-list')
             .then(response => response.json())
             .then(data => {
-                for (const itemName in data.items) {
-                    const desiredQuantity = data.items[itemName].desiredQuantity;
+                // Check if data is an array and not empty
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        const { name, desiredQuantity } = item;
     
-                    // Skip rendering items with a quantity of 0
-                    if (desiredQuantity > 0) {
-                        const capitalizedItemName = capitalizeFirstLetter(itemName);
-                        addListItem(capitalizedItemName, desiredQuantity);
-                    }
+                        // Skip rendering items with a quantity of 0
+                        if (desiredQuantity > 0) {
+                            const capitalizedItemName = capitalizeFirstLetter(name);
+                            addListItem(capitalizedItemName, desiredQuantity);
+                        }
+                    });
                 }
             })
             .catch(error => {
@@ -141,15 +144,23 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
     
+    
     function capitalizeFirstLetter(str) {
+    // Check if str is defined
+    if (str) {
         // Convert special characters to their standard counterparts
         const normalizedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    
+
         // Capitalize the first letter of each word
         const capitalizedStr = normalizedStr.replace(/\b\w/g, c => c.toUpperCase());
-    
+
         return capitalizedStr;
+    } else {
+        // If str is not defined, return an empty string or handle it as needed
+        return '';
     }
+}
+
     
     
     

@@ -3,10 +3,9 @@ import bodyParser from 'body-parser';
 import fs from 'fs';
 
 export class Item {
-    constructor(name, desiredQuantity, acquiredQuantity) {
+    constructor(name, desiredQuantity) {
         this.name = name;
         this.desiredQuantity = desiredQuantity;
-        this.acquiredQuantity = acquiredQuantity;
     }
 
     changeName(newName) {

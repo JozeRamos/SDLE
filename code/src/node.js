@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
+import { ShoppingList } from './shopping_list.js';
+import { Item } from './item.js';
 
 export class Node {
   constructor() {
@@ -18,34 +20,20 @@ export class Node {
   }
 
   executeShoppingList(port) {
-    const jsonFilePath = './shopping-lists/onePerReplica.json';
+    const shopping_list = new ShoppingList("onePerReplica", []); //change code in future work
 
     this.app.use(express.static('public'));
     this.app.use(express.json());
 
-    let shoppingListData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
-
     this.app.get('/api/shopping-list', (req, res) => {
-      res.json(shoppingListData);
+      shopping_list.loadShoppingList();
+      res.json(shopping_list.itemsList);
     });
 
     // Inside your '/update-list' route
     this.app.post('/update-list', (req, res) => {
-        const { name, desiredQuantity, quantityBought } = req.body;
-
-        // Convert item name to lowercase
-        const normalizedStr = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const lowercaseName = normalizedStr.toLowerCase();
-
-        if (shoppingListData.items[lowercaseName]) {
-            shoppingListData.items[lowercaseName].desiredQuantity = desiredQuantity;
-            shoppingListData.items[lowercaseName].quantityBought = quantityBought;
-        } else {
-            shoppingListData.items[lowercaseName] = { itemName: lowercaseName, desiredQuantity, quantityBought };
-        }
-
-        fs.writeFileSync(jsonFilePath, JSON.stringify(shoppingListData, null, 2), 'utf8');
-
+        shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
+        shopping_list.storeShoppingList();
         res.json({ message: 'List updated successfully' });
     });
 

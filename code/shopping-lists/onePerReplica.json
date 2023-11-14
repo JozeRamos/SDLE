@@ -1,19 +1,19 @@
 {
-  "listId": "unique-list-identifier",
+  "listId": "onePerReplica",
   "replicaId": "unique-replica-identifier",
   "listName": "Shopping List Name",
-  "items": {
-    "banana": {
-      "itemName": "banana",
-      "desiredQuantity": 6
+  "items": [
+    {
+      "name": "banana",
+      "desiredQuantity": 11
     },
-    "laranja": {
-      "itemName": "laranja",
-      "desiredQuantity": 6
+    {
+      "name": "laranja",
+      "desiredQuantity": 7
     },
-    "maca": {
-      "itemName": "maca",
-      "desiredQuantity": 3
+    {
+      "name": "maca",
+      "desiredQuantity": 2
     }
-  }
+  ]
 }
