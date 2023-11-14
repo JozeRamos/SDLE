@@ -11,6 +11,11 @@ export class ShoppingList {
     }
 
     addItem(item) {
+        if(item.desiredQuantity==0) {
+            this.removeItem(item);
+            return;
+        }
+
         // Check if an item with the same name already exists in the list
         for (const i in this.itemsList) {
             if (this.itemsList[i].name === item.name) {
