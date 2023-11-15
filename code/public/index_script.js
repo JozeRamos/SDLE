@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const codeButton = document.getElementById("addCode");
+    const codeButton = document.getElementById("listCodeButton");
+    const newCodeButton = document.getElementById("newListCodeButton");
     const codeInput = document.getElementById("listCode");
+    const newCodeInput = document.getElementById("newListCode");
     
     function manageCode(code) {
         // Send a POST request to update the JSON file on the server
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data.message); // Log the response from the server
+            window.location.href = '/shopping-list.html';
         })
         .catch(error => {
             console.error('Error:', error);
@@ -22,8 +24,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     codeButton.addEventListener("click", function() {
         const code = codeInput.value.trim();
-        console.log(code);
+        if (code !== "") {
+            manageCode(code);
+            codeInput.value = "";
+        }
+    });
 
+    newCodeButton.addEventListener("click", function() {
+        const code = newCodeInput.value.trim();
         if (code !== "") {
             manageCode(code);
             codeInput.value = "";
