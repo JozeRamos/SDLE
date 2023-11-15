@@ -1,8 +1,4 @@
-// index.js
-
 import express from 'express';
-import { Node } from "./src/node.js";
-
 const app1 = express();
 const app2 = express();
 
@@ -12,9 +8,21 @@ const handler = num => (req,res)=>{
 	res.send('Response from server ' + num);
 }
 
-// Create instances of the Node class and initialize with ports
-const node1 = new Node();
-node1.init(3000);
+// Only handle GET and POST requests
+// Receive request and pass to handler method
+app1.get('*', handler(1)).post('*', handler(1));
+app2.get('*', handler(2)).post('*', handler(2));
 
-const node2 = new Node();
-node2.init(3001);
+// Start server on PORT 3000
+app1.listen(3000, err =>{
+	err ?
+	console.log("Failed to listen on PORT 3000"):
+	console.log("Application Server listening on PORT 3000");
+});
+
+// Start server on PORT 3001
+app2.listen(3001, err =>{
+	err ?
+	console.log("Failed to listen on PORT 3001"):
+	console.log("Application Server listening on PORT 3001");
+});
