@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { ShoppingList } from './shopping_list.js';
 import { Client } from './client.js';
 import { Item } from './item.js';
 
@@ -28,12 +27,17 @@ export class Node {
 
     this.app.post('/manage-code', (req, res) => {
       client.changeCode(req.body.code);
+      if (req.body.message === "new list") {
+        client.shopping_list.createShoppingList();
+      }
       res.json({ message: 'List code updated successfully' });
     });
 
     this.app.get('/api/shopping-list', (req, res) => {
-      client.shopping_list.loadShoppingList();
-      res.json(client.shopping_list.itemsList);
+      if(!client.shopping_list.loadShoppingList()){
+        res.redirect('/');
+      }
+      else {res.json(client.shopping_list.itemsList);}
     });
 
     // Inside your '/update-list' route

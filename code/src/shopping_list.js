@@ -65,19 +65,7 @@ export class ShoppingList {
 
 
         if (!fs.existsSync(filePath)) {
-            console.log(`Shopping list with code ${this.code} does not exist. Creating a new file...`);
-    
-            // Create an empty data object to write to the new file
-            const newData = {
-                listId: this.code,
-                replicaId: 'unique-replica-identifier',
-                listName: 'Shopping List Name',
-                items: {},
-            };
-    
-            // Write the new file with the empty data
-            fs.writeFileSync(filePath, JSON.stringify(newData, null, 2), 'utf8');
-            console.log(`New shopping list file created at ${filePath}`);
+            console.log(`Shopping list with code ${this.code} does not exist.`);
             return null; // Return null as there are no items in the new file
         }
 
@@ -89,12 +77,31 @@ export class ShoppingList {
             this.addItem(newItem);
         }
 
-        // Convert data back to Item instances
-        //const items = data.map(itemData => new Item(itemData.name, itemData.desiredQuantity, itemData.acquiredQuantity));
-
-        // Add loaded items to the current shopping list
-        //items.forEach(item => this.addItem(item));
-
-        // Implement additional functionalities (Load Balance, Replication) if needed
+        return data;
     }
+
+    createShoppingList() {
+        this.itemsList = [];
+
+        const folderName = 'shopping-lists/';
+        const fileName = `${this.code}.json`;
+
+        const currentFilePath = fileURLToPath(import.meta.url);
+        const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+
+        console.log(`Creating a new file with code ${this.code}...`);
+    
+        // Create an empty data object to write to the new file
+        const newData = {
+            listId: this.code,
+            replicaId: 'unique-replica-identifier',
+            listName: 'Shopping List Name',
+            items: {},
+        };
+
+        // Write the new file with the empty data
+        fs.writeFileSync(filePath, JSON.stringify(newData, null, 2), 'utf8');
+        console.log(`New shopping list file created at ${filePath}`);
+    }
+
 }

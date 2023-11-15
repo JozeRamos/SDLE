@@ -4,14 +4,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const codeInput = document.getElementById("listCode");
     const newCodeInput = document.getElementById("newListCode");
     
-    function manageCode(code) {
+    function manageCode(code, message) {
         // Send a POST request to update the JSON file on the server
         fetch('/manage-code', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ code }),
+            body: JSON.stringify({ code, message }),
         })
         .then(response => response.json())
         .then(data => {
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
     codeButton.addEventListener("click", function() {
         const code = codeInput.value.trim();
         if (code !== "") {
-            manageCode(code);
+            manageCode(code, null);
             codeInput.value = "";
         }
     });
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
     newCodeButton.addEventListener("click", function() {
         const code = newCodeInput.value.trim();
         if (code !== "") {
-            manageCode(code);
+            manageCode(code, "new list");
             codeInput.value = "";
         }
     });
