@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
 
+    document.getElementById('desired-quantity').addEventListener('input', function() {
+        // Replace any non-digit characters with an empty string
+        this.value = this.value.replace(/\D/g, '');
+    });
+
     function addListItem(name, desiredQuantity) {
         // Convert the name to lowercase for comparison
         const lowercaseName = name.toLowerCase();
@@ -105,16 +110,16 @@ document.addEventListener("DOMContentLoaded", function() {
             // Set quantity to 1 if it's empty
             if (desiredQuantity === "") {
                 desiredQuantity = 1;
+                addListItem(name, desiredQuantity);
             } else {
                 desiredQuantity = parseInt(desiredQuantity);
-                if (isNaN(desiredQuantity) || desiredQuantity < 1) {
-                    // Invalid quantity, set it to 1
-                    desiredQuantity = 1;
+                if (desiredQuantity >0) {
+                    addListItem(name, desiredQuantity);
                 }
             }
 
             // Create a new list item with quantity buttons and add it to the shopping list
-            addListItem(name, desiredQuantity);
+            
 
             // Clear the input fields
             nameInput.value = "";

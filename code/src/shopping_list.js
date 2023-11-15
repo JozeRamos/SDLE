@@ -50,7 +50,7 @@ export class ShoppingList {
         if (!fs.existsSync(path.join('..', folderName))) {
             fs.mkdirSync(path.join('..', folderName));
         }
-    
+            
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
         // console.log(`Shopping list stored in ${filePath}`);
     }
