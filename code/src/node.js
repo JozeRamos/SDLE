@@ -25,6 +25,11 @@ export class Node {
     this.app.use(express.static('public'));
     this.app.use(express.json());
 
+    this.app.post('/manage-code', (req, res) => {
+      console.log(req.body);
+      res.json({ message: 'YEY' });
+    });
+
     this.app.get('/api/shopping-list', (req, res) => {
       shopping_list.loadShoppingList();
       res.json(shopping_list.itemsList);
