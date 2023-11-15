@@ -4,6 +4,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const addItemButton = document.getElementById("add");
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
+    const title = document.getElementById("title");
+
+    // Add an event listener for click
+    title.addEventListener("click", function() {
+        window.location.href = '/';
+    });
 
     document.getElementById('desired-quantity').addEventListener('input', function() {
         // Replace any non-digit characters with an empty string
