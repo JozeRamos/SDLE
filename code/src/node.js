@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { ShoppingList } from './shopping_list.js';
+import { Client } from './client.js';
 import { Item } from './item.js';
 
 export class Node {
@@ -20,20 +20,30 @@ export class Node {
   }
 
   executeShoppingList(port) {
-    const shopping_list = new ShoppingList("onePerReplica", []); //change code in future work
+    const client = new Client(port, null);
 
     this.app.use(express.static('public'));
     this.app.use(express.json());
 
+    this.app.post('/manage-code', (req, res) => {
+      client.changeCode(req.body.code);
+      if (req.body.message === "new list") {
+        client.shopping_list.createShoppingList();
+      }
+      res.json({ message: 'List code updated successfully' });
+    });
+
     this.app.get('/api/shopping-list', (req, res) => {
-      shopping_list.loadShoppingList();
-      res.json(shopping_list.itemsList);
+      if(!client.shopping_list.loadShoppingList()){
+        res.redirect('/');
+      }
+      else {res.json(client.shopping_list.itemsList);}
     });
 
     // Inside your '/update-list' route
     this.app.post('/update-list', (req, res) => {
-        shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
-        shopping_list.storeShoppingList();
+        client.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
+        client.shopping_list.storeShoppingList();
         res.json({ message: 'List updated successfully' });
     });
 

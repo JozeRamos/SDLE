@@ -125,7 +125,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function fetchInitialData() {
         fetch('/api/shopping-list')
-            .then(response => response.json())
+            .then(response => {
+                if (response.redirected) {
+                    // Handle redirection
+                    window.location.href = response.url;
+                    return Promise.reject('Redirection occurred');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 // Check if data is an array and not empty
                 if (Array.isArray(data) && data.length > 0) {
