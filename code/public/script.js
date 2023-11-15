@@ -117,10 +117,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     addListItem(name, desiredQuantity);
                 }
             }
-
-            // Create a new list item with quantity buttons and add it to the shopping list
-            
-
             // Clear the input fields
             nameInput.value = "";
             desiredQuantityInput.value = "";
