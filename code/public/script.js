@@ -4,6 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const addItemButton = document.getElementById("add");
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
+    const title = document.getElementById("title");
+
+    // Add an event listener for click
+    title.addEventListener("click", function() {
+        window.location.href = '/';
+    });
+
+    document.getElementById('desired-quantity').addEventListener('input', function() {
+        // Replace any non-digit characters with an empty string
+        this.value = this.value.replace(/\D/g, '');
+    });
 
     function addListItem(name, desiredQuantity) {
         // Convert the name to lowercase for comparison
@@ -105,17 +116,13 @@ document.addEventListener("DOMContentLoaded", function() {
             // Set quantity to 1 if it's empty
             if (desiredQuantity === "") {
                 desiredQuantity = 1;
+                addListItem(name, desiredQuantity);
             } else {
                 desiredQuantity = parseInt(desiredQuantity);
-                if (isNaN(desiredQuantity) || desiredQuantity < 1) {
-                    // Invalid quantity, set it to 1
-                    desiredQuantity = 1;
+                if (desiredQuantity >0) {
+                    addListItem(name, desiredQuantity);
                 }
             }
-
-            // Create a new list item with quantity buttons and add it to the shopping list
-            addListItem(name, desiredQuantity);
-
             // Clear the input fields
             nameInput.value = "";
             desiredQuantityInput.value = "";
@@ -124,7 +131,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function fetchInitialData() {
         fetch('/api/shopping-list')
-            .then(response => response.json())
+            .then(response => {
+                if (response.redirected) {
+                    // Handle redirection
+                    window.location.href = response.url;
+                    return Promise.reject('Redirection occurred');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 // Check if data is an array and not empty
                 if (Array.isArray(data) && data.length > 0) {
