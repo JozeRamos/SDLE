@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import axios from 'axios';
+const app = express();
 
 // Application servers
 const servers = [

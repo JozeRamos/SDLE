@@ -16,6 +16,6 @@ await node.init(PORT);
 const node1 = new Node();
 await node1.init(PORT1);
 
-node.app.get('*', handler(1)).post('*', handler(1));
-node1.app.get('*', handler(2)).post('*', handler(2));
+// node.app.get('*', handler(1)).post('*', handler(1));
+// node1.app.get('*', handler(2)).post('*', handler(2));
 
