@@ -1,60 +1,60 @@
+// config.js
+
 import express from 'express';
 import path from 'path';
 import axios from 'axios';
+
 const app = express();
 
 // Application servers
 const servers = [
-	"http://localhost:3000",
-	"http://localhost:3001"
+    "http://localhost:3000",
+    "http://localhost:3001"
 ]
 
-// Track the current application server to send request
+// Track the current application server to send requests
 let current = 0;
 
-// Receive new request
-// Forward to application server
-const handler = async (req, res) =>{
+// Middleware to parse JSON requests
+app.use(express.json());
 
-	// Destructure following properties from request object
-	const { method, url, headers, body } = req;
+// Receive new request and forward to application server
+const handler = async (req, res) => {
+    // Destructure properties from request object
+    const { method, url, headers, body } = req;
 
-	// Select the current server to forward the request
-	const server = servers[current];
+    // Select the current server to forward the request
+    const server = servers[current];
 
-	// Update track to select next server
-	current === (servers.length-1)? current = 0 : current++
+    // Update track to select the next server
+    current = (current + 1) % servers.length;
 
-	try{
-		// Requesting to underlying application server
-		const response = await axios({
-			url: `${server}${url}`,
-			method: method,
-			headers: headers,
-			data: body
-		});
-		// Send back the response data
-		// from application server to client 
-		res.send(response.data)
-	}
-	catch(err){
-		// Send back the error message 
-		res.status(500).send("Server error!") 
-	}
+    try {
+        // Requesting the underlying application server
+        const response = await axios({
+            url: `${server}${url}`,
+            method: method,
+            headers: headers,
+            data: body
+        });
+
+        // Send back the response data from the application server to the client
+        res.send(response.data);
+    } catch (err) {
+        // Send back the error message 
+        console.error('Error in load balancer:', err);
+        res.status(500).send("Load Balancer error!");
+    }
 }
 
 // Serve favicon.ico image
-app.get('/favicon.ico', (req, res
-	) => res.sendFile('/favicon.ico'));
+app.get('/favicon.ico', (req, res) => res.sendFile('/favicon.ico'));
 
-// When receive new request
-// Pass it to handler method
-app.use((req,res)=>{handler(req, res)});
+// Route for handling all other requests
+app.all('*', handler);
 
 // Listen on PORT 8080
-app.listen(8080, err =>{
-	err ?
-	console.log("Failed to listen on PORT 8080"):
-	console.log("Load Balancer Server "
-		+ "listening on PORT 8080");
+const PORT = 8080;
+app.listen(PORT, () => {
+    console.log(`Load Balancer Server listening on PORT ${PORT}`);
 });

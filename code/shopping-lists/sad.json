@@ -1,0 +1,15 @@
+{
+  "listId": "sad",
+  "replicaId": "unique-replica-identifier",
+  "listName": "Shopping List Name",
+  "items": [
+    {
+      "name": "banana",
+      "desiredQuantity": 3
+    },
+    {
+      "name": "veni",
+      "desiredQuantity": 4
+    }
+  ]
+}
