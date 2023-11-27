@@ -1,10 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import fs from 'fs';
 import { Client } from './client.js';
 import { Item } from './item.js';
 
-export class Node {
+export class Server {
   constructor() {
     this.app = express();
   }
@@ -15,11 +14,11 @@ export class Node {
 
     this.app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
-      //this.executeShoppingList(port);
+      this.executeShoppingList(port);
     });
   }
 
-  /*executeShoppingList(port) {
+  executeShoppingList(port) {
     const client = new Client(port, null);
 
     this.app.use(express.static('public'));
@@ -49,5 +48,5 @@ export class Node {
 
 
     console.log(`Server is running on port ${port}`);
-  }*/
+  }
 }
