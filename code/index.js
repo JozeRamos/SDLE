@@ -12,7 +12,7 @@ const node2 = new Node();
 
 (async () => {
     await node1.init(PORT1);
-    await node2.init(PORT2);
+    //await node2.init(PORT2);
 
     // Handler method 
     const handler = num => (req, res) => {

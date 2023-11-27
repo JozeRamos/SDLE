@@ -15,11 +15,11 @@ export class Node {
 
     this.app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
-      this.executeShoppingList(port);
+      //this.executeShoppingList(port);
     });
   }
 
-  executeShoppingList(port) {
+  /*executeShoppingList(port) {
     const client = new Client(port, null);
 
     this.app.use(express.static('public'));
@@ -49,5 +49,5 @@ export class Node {
 
 
     console.log(`Server is running on port ${port}`);
-  }
+  }*/
 }
