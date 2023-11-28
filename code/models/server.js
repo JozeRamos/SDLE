@@ -20,15 +20,15 @@ export class Server {
       if (sender == "Local") {
         console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
         const dicLength = Object.keys(this.dic).length
-        res.send(`${dicLength}`); // Respond with 'Received' when a message is received
+        res.send(`${dicLength}`); // Respond with number of lists
       }
       else if (sender == "Cloud"){
         console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
         if (content in this.dic) {
-          res.send(`${content} is in the dictionary.`); // Respond with 'Received' when a message is received
+          res.send(`${content} is in the dictionary.`); // Respond with elem is in dictionary
         }
         else {
-          res.send(`${content} is not in the dictionary.`); // Respond with 'Received' when a message is received
+          res.send(`${content} is not in the dictionary.`); // Respond with elem is not in dictionary
         }
         
       }
