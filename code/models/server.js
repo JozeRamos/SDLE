@@ -9,10 +9,17 @@ export class Server {
   }
 
   async init(port) {
-    this.app.use(bodyParser.json());
-    this.app.use(express.static('public'));
 
-    this.app.listen(port, () => {
+    // Middleware to log the port for requests on all ports except 3000, 3001, and 3002
+    this.app.use((req, res, next) => {
+      const excludedPorts = [/*3000, 3001, 3002*/];
+      if (!excludedPorts.includes(req.socket.localPort)) {
+        console.log(`Request received on port ${req.socket.localPort}`);
+      }
+      next();
+    });
+
+    this.app.listen(port,() => {
       console.log(`Server is running on http://localhost:${port}`);
       this.executeLists(port);
     });
