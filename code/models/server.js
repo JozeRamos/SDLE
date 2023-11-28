@@ -11,8 +11,7 @@ export class Server {
   async init(port) {
     this.app.use(bodyParser.json());
 
-
-    // Middleware to log the port for requests on all ports except 3000, 3001, and 3002
+    // requests go here
     this.app.use((req, res, next) => {
       const { sender } = req.body;
       const { content } = req.body;
@@ -52,7 +51,7 @@ export class Server {
     // Parse the JSON content
     const jsonData = JSON.parse(fileContent);
     
-    // Create a dictionary with names    
+    // Populate the dictionary with names    
     jsonData.items.forEach(item => {
       this.dic[item.name] = true;
     });
