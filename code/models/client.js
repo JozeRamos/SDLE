@@ -18,7 +18,7 @@ export class Client {
     changeCode(code) {
         this.code = code;
         this.shopping_list.code = code;
-        this.shopping_list.itemsList = [];
+        this.shopping_list =  new ShoppingList(code, []);
     }
 
     createRandomCode() {
@@ -74,7 +74,7 @@ export class Client {
         else {
           const response = {
             code: this.code,
-            itemsList: this.shopping_list.itemsList,
+            itemsList: this.shopping_list.addWinSet.elements,
         };
         res.json(response);
         }
@@ -82,7 +82,15 @@ export class Client {
   
       // Inside your '/update-list' route
       this.app.post('/update-list', (req, res) => {
-          this.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
+          // this.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
+
+          if(req.body.quantityDifference > 0) {
+            this.shopping_list.addWinSet = this.shopping_list.addWinSet.add(req.body.name, req.body.quantityDifference);
+          }
+          if(req.body.quantityDifference < 0) {
+            this.shopping_list.addWinSet = this.shopping_list.addWinSet.remove(req.body.name, -req.body.quantityDifference);
+          }
+          
           this.shopping_list.storeShoppingList(this.port);
           res.json({ message: 'List updated successfully' });
       });

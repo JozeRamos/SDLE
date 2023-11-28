@@ -36,14 +36,10 @@
     },
     {
       "name": "mac",
-      "desiredQuantity": 1
+      "desiredQuantity": 12
     },
     {
       "name": "hkkk",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "ioio",
       "desiredQuantity": 1
     }
   ]
