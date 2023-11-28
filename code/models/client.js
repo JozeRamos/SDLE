@@ -2,6 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { ShoppingList } from "./shopping-list.js";
 import { Item } from './item.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
+import fs from 'fs';
 
 export class Client {
     constructor(port, code) {

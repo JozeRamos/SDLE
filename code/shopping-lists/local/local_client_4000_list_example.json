@@ -1,7 +1,6 @@
 {
   "listId": "example",
-  "replicaId": "unique-replica-identifier",
-  "listName": "Shopping List Name",
+  "replicaId": "local_client_4000_list_example.json",
   "items": [
     {
       "name": "banana",

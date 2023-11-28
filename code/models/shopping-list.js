@@ -38,8 +38,7 @@ export class ShoppingList {
         // Include initial lines
         const data = {
             listId: this.code,
-            replicaId: 'unique-replica-identifier',
-            listName: 'Shopping List Name',
+            replicaId: fileName,
             items: this.itemsList,
         };
     
@@ -94,8 +93,7 @@ export class ShoppingList {
         // Create an empty data object to write to the new file
         const newData = {
             listId: this.code,
-            replicaId: 'unique-replica-identifier',
-            listName: 'Shopping List Name',
+            replicaId: fileName,
             items: {},
         };
 
