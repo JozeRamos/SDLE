@@ -54,9 +54,9 @@ export class AddWinSet {
     return new AddWinSet(mergedElements);
   }
   
-  saveToFile(filename) {
-    const jsonContent = JSON.stringify(this.elements, null, 2);
-    fs.writeFileSync(filename, jsonContent);
-    console.log(`Set saved to ${filename}`);
-  }
+  // saveToFile(filename) {
+  //   const jsonContent = JSON.stringify(this.elements, null, 2);
+  //   fs.writeFileSync(filename, jsonContent);
+  //   console.log(`Set saved to ${filename}`);
+  // }
 }

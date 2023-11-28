@@ -3,37 +3,50 @@ import path from 'path';
 import { Item } from './item.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { AddWinSet } from '../crdts/add-win-set.js';
 
 export class ShoppingList {
     constructor(code, initialList) {
         this.code = code;
         this.itemsList = initialList;
+        this.addWinSet = new AddWinSet();
     }
 
-    addItem(item) {
-        if(item.desiredQuantity==0) {
-            this.removeItem(item);
-            return;
-        }
+    // addItem(item) {
+    //     if(item.desiredQuantity==0) {
+    //         this.removeItem(item);
+    //         return;
+    //     }
 
-        // Check if an item with the same name already exists in the list
-        for (const i in this.itemsList) {
-            if (this.itemsList[i].name === item.name) {
-                this.itemsList[i].changeDesiredQuantity(item.desiredQuantity);
-                return;
-            }
-        }
-        this.itemsList.push(item);
-    }
+    //     // Check if an item with the same name already exists in the list
+    //     for (const i in this.itemsList) {
+    //         if (this.itemsList[i].name === item.name) {
+    //             this.itemsList[i].changeDesiredQuantity(item.desiredQuantity);
+    //             return;
+    //         }
+    //     }
+    //     this.itemsList.push(item);
+    // }
     
 
-    removeItem(item) {
-        this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
+    // removeItem(item) {
+    //     this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
+    // }
+
+    createList(elements) {
+        this.itemsList = [];
+        for (const itemName in elements) {
+            const quantity = elements[itemName];
+            const newItem = new Item(itemName, quantity);
+            this.itemsList.push(newItem);
+        }
     }
 
     storeShoppingList(port) {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
+
+        this.createList(this.addWinSet.elements);
     
         // Include initial lines
         const data = {
@@ -56,6 +69,8 @@ export class ShoppingList {
     
 
     loadShoppingList(port) {
+        this.addWinSet = new AddWinSet();
+
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
 
@@ -72,8 +87,9 @@ export class ShoppingList {
 
         for (const itemName in data.items) {
             const itemData = data.items[itemName];
-            const newItem = new Item(itemData.name, itemData.desiredQuantity);
-            this.addItem(newItem);
+            // const newItem = new Item(itemData.name, itemData.desiredQuantity);
+            // this.addItem(newItem);
+            this.addWinSet = this.addWinSet.add(itemData.name, itemData.desiredQuantity);
         }
 
         return data;
