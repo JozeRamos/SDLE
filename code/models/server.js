@@ -15,7 +15,7 @@ export class Server {
     this.app.use((req, res, next) => {
       const { sender } = req.body;
       const { content } = req.body;
-      console.log(content)
+      
       if (sender == "Local") {
         console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
         const dicLength = Object.keys(this.dic).length
@@ -36,8 +36,8 @@ export class Server {
       }
     });
 
-    this.app.listen(port,() => {
-      console.log(`Server is running on http://localhost:${port}`);
+    this.app.listen(port,'0.0.0.0',() => {
+      console.log(`Server is running on port ${port}`);
       this.executeLists(port);
     });
   }
@@ -58,7 +58,5 @@ export class Server {
     
     console.log(this.dic);
     
-    
-    console.log(`Server is running on port ${port}`);
   }
 }

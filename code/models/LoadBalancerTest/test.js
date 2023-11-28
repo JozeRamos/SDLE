@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Replace 'your_server_url' with the actual URL of your server
-const serverUrl = 'http://localhost:3000'; // Update the port if necessary
+const serverUrl = 'http://localhost:3001'; // Update the port if necessary
 
 // Example message data
 const message = {
