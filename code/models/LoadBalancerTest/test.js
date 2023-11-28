@@ -5,8 +5,8 @@ const serverUrl = 'http://localhost:3000'; // Update the port if necessary
 
 // Example message data
 const message = {
-  sender: 'Local',
-  content: '5000',
+  sender: 'Cloud',
+  content: 'banana',
 };
 
 // Send a POST request to the server

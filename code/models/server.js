@@ -14,11 +14,27 @@ export class Server {
 
     // Middleware to log the port for requests on all ports except 3000, 3001, and 3002
     this.app.use((req, res, next) => {
-      const excludedPorts = [/*3000, 3001, 3002*/];
-      if (!excludedPorts.includes(req.socket.localPort)) {
+      const { sender } = req.body;
+      const { content } = req.body;
+      console.log(content)
+      if (sender == "Local") {
         console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
+        const dicLength = Object.keys(this.dic).length
+        res.send(`${dicLength}`); // Respond with 'Received' when a message is received
       }
-      next();
+      else if (sender == "Cloud"){
+        console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
+        if (content in this.dic) {
+          res.send(`${content} is in the dictionary.`); // Respond with 'Received' when a message is received
+        }
+        else {
+          res.send(`${content} is not in the dictionary.`); // Respond with 'Received' when a message is received
+        }
+        
+      }
+      else {
+        next()
+      }
     });
 
     this.app.listen(port,() => {
@@ -26,6 +42,7 @@ export class Server {
       this.executeLists(port);
     });
   }
+
 
   executeLists(port) {
 
