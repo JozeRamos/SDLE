@@ -26,13 +26,12 @@ export class Server {
     // Parse the JSON content
     const jsonData = JSON.parse(fileContent);
     
-    // Create a dictionary with names
-    const namesDictionary = {};
+    // Create a dictionary with names    
     jsonData.items.forEach(item => {
-      namesDictionary[item.name] = true;
+      this.dic[item.name] = true;
     });
     
-    console.log(namesDictionary);
+    console.log(this.dic);
     
     
     console.log(`Server is running on port ${port}`);
