@@ -1,0 +1,11 @@
+{
+  "listId": "DrQS2l36",
+  "replicaId": "unique-replica-identifier",
+  "listName": "Shopping List Name",
+  "items": [
+    {
+      "name": "banana",
+      "desiredQuantity": 1
+    }
+  ]
+}

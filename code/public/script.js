@@ -141,9 +141,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .then(data => {
+                const code = data.code;
+                const itemsList = data.itemsList;
+                title.textContent = `Shopping List ${code}`;
+
                 // Check if data is an array and not empty
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(item => {
+                if (Array.isArray(itemsList) && itemsList.length > 0) {
+
+                    itemsList.forEach(item => {
                         const { name, desiredQuantity } = item;
     
                         // Skip rendering items with a quantity of 0

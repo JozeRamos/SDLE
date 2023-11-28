@@ -1,5 +1,5 @@
 {
-  "listId": "onePerReplica",
+  "listId": "example",
   "replicaId": "unique-replica-identifier",
   "listName": "Shopping List Name",
   "items": [
@@ -18,10 +18,6 @@
     {
       "name": "hh",
       "desiredQuantity": 4
-    },
-    {
-      "name": "banana mutante",
-      "desiredQuantity": 1
     },
     {
       "name": "tomate",
@@ -44,23 +40,11 @@
       "desiredQuantity": 1
     },
     {
-      "name": "gagaaaaaa",
-      "desiredQuantity": 1
-    },
-    {
       "name": "hkkk",
       "desiredQuantity": 1
     },
     {
       "name": "ioio",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "jhajkfba",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "ola",
       "desiredQuantity": 1
     }
   ]

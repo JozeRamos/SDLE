@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const codeButton = document.getElementById("listCodeButton");
     const newCodeButton = document.getElementById("newListCodeButton");
     const codeInput = document.getElementById("listCode");
-    const newCodeInput = document.getElementById("newListCode");
     
     function manageCode(code, message) {
         // Send a POST request to update the JSON file on the server
@@ -31,10 +30,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     newCodeButton.addEventListener("click", function() {
-        const code = newCodeInput.value.trim();
-        if (code !== "") {
-            manageCode(code, "new list");
-            codeInput.value = "";
-        }
+        manageCode(null, "new list");
     });
 });

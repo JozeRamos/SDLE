@@ -31,9 +31,9 @@ export class ShoppingList {
         this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
     }
 
-    storeShoppingList() {
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+    storeShoppingList(port) {
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
     
         // Include initial lines
         const data = {
@@ -56,9 +56,9 @@ export class ShoppingList {
     }
     
 
-    loadShoppingList() {
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+    loadShoppingList(port) {
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
 
         const currentFilePath = fileURLToPath(import.meta.url);
         const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
@@ -80,11 +80,11 @@ export class ShoppingList {
         return data;
     }
 
-    createShoppingList() {
+    createShoppingList(port) {
         this.itemsList = [];
 
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
 
         const currentFilePath = fileURLToPath(import.meta.url);
         const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);

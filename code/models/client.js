@@ -14,6 +14,32 @@ export class Client {
     changeCode(code) {
         this.code = code;
         this.shopping_list.code = code;
+        this.shopping_list.itemsList = [];
+    }
+
+    createRandomCode() {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const codeLength = 8;
+      let newCode;
+
+      do {
+        newCode = '';
+        for (let i = 0; i < codeLength; i++) {
+          newCode += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+      } while (this.codeExists(newCode));
+
+      this.code = newCode;
+      this.shopping_list.code = newCode;
+    }
+
+    codeExists(code) {  
+      const folderName = '../shopping-lists/local/';
+      const fileName = `local_client_${this.port}_list_${code}.json`;
+      const currentFilePath = fileURLToPath(import.meta.url);
+      const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+
+      return fs.existsSync(filePath);
     }
 
     async init() {
@@ -31,22 +57,29 @@ export class Client {
       this.app.post('/manage-code', (req, res) => {
         this.changeCode(req.body.code);
         if (req.body.message === "new list") {
-          this.shopping_list.createShoppingList();
+          this.createRandomCode();
+          this.shopping_list.createShoppingList(this.port);
         }
         res.json({ message: 'List code updated successfully' });
       });
   
       this.app.get('/api/shopping-list', (req, res) => {
-        if(!this.shopping_list.loadShoppingList()){
+        if(!this.shopping_list.loadShoppingList(this.port)){
           res.redirect('/');
         }
-        else {res.json(this.shopping_list.itemsList);}
+        else {
+          const response = {
+            code: this.code,
+            itemsList: this.shopping_list.itemsList,
+        };
+        res.json(response);
+        }
       });
   
       // Inside your '/update-list' route
       this.app.post('/update-list', (req, res) => {
           this.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
-          this.shopping_list.storeShoppingList();
+          this.shopping_list.storeShoppingList(this.port);
           res.json({ message: 'List updated successfully' });
       });
     }
