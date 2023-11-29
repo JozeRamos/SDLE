@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+import { WebSocket } from 'ws';
 const routerSocket = new WebSocket.Server({ port: 8080 });
 
 const servers = {}; // List of active servers

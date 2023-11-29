@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import { Client } from './client.js';
 import { Item } from './item.js';
 
-const WebSocket = require('ws');
+import { WebSocket } from 'ws';
 
 export class Server {
   constructor() {

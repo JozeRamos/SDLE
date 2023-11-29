@@ -1,13 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import path from 'path';
+import fs from 'fs';
 import { ShoppingList } from "./shopping-list.js";
 import { Item } from './item.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import path from 'path';
-import fs from 'fs';
 
-const WebSocket = require('ws');
+import { WebSocket } from 'ws';
 
 export class Client {
     constructor(port, code) {
