@@ -10,7 +10,7 @@ const message = {
 };
 
 // Send a POST request to the server
-axios.post(`${serverUrl}/your-api-endpoint`, message)
+axios.post(`${serverUrl}`, message)
   .then(response => {
     console.log('Response from server:', response.data);
   })
