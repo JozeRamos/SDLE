@@ -3,18 +3,33 @@ import bodyParser from 'body-parser';
 import { Client } from './client.js';
 import { Item } from './item.js';
 
+const WebSocket = require('ws');
+
 export class Server {
   constructor() {
     this.app = express();
+    this.routerSocket = new WebSocket('ws://localhost:8080'); // Connect to the router - add router port
   }
 
   async init(port) {
     this.app.use(bodyParser.json());
-    this.app.use(express.static('public'));
+    //this.app.use(express.static('public'));
+
+    this.routerSocket.on('open', () => {
+      console.log('Connected to router');
+    });
 
     this.app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
-      //this.executeShoppingList(port);
+
+      this.routerSocket.on('message', (message) => {
+        // Handle messages from the router if needed
+        console.log('Received message from router:', message);
+      });
+
+      // Example of how a server might send its list data to the router
+      //const listData = { listId: 'unique_id', items: [] };
+      //this.routerSocket.send(JSON.stringify(listData));
     });
   }
 

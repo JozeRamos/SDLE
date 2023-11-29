@@ -7,12 +7,26 @@ import { dirname } from 'path';
 import path from 'path';
 import fs from 'fs';
 
+const WebSocket = require('ws');
+
 export class Client {
     constructor(port, code) {
       this.port = port;
       this.app = express();
       this.code = code;
       this.shopping_list =  new ShoppingList(code, []);
+      this.routerSocket = new WebSocket('ws://localhost:8080'); // Connect to the router
+    }
+
+    async init() {
+      this.app.use(express.static('public'));
+      this.app.use(express.json());
+      this.app.use(bodyParser.json());
+  
+      this.app.listen(this.port, () => {
+        console.log(`Client is running on http://localhost:${this.port}`);
+        this.executeShoppingList();
+      });
     }
 
     changeCode(code) {
@@ -44,17 +58,6 @@ export class Client {
       const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
 
       return fs.existsSync(filePath);
-    }
-
-    async init() {
-      this.app.use(express.static('public'));
-      this.app.use(express.json());
-      this.app.use(bodyParser.json());
-  
-      this.app.listen(this.port, () => {
-        console.log(`Client is running on http://localhost:${this.port}`);
-        this.executeShoppingList();
-      });
     }
   
     executeShoppingList() {
