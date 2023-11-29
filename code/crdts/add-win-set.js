@@ -1,6 +1,6 @@
-import fs from 'fs';
+//const fs = require('fs');
 
-export class AddWinSet {
+class AddWinSet {
   constructor(elements = {}) {
     this.elements = elements;
   }
@@ -60,3 +60,5 @@ export class AddWinSet {
   //   console.log(`Set saved to ${filename}`);
   // }
 }
+
+module.exports = AddWinSet;

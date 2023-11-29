@@ -1,15 +1,13 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import path from 'path';
-import fs from 'fs';
-import { ShoppingList } from "./shopping-list.js";
-import { Item } from './item.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const fs = require('fs');
+const ShoppingList = require('./shopping-list.js');
+const fileURLToPath = require('url');
 
-import { WebSocket } from 'ws';
+const WebSocket = require('ws');
 
-export class Client {
+class Client {
     constructor(port, code) {
       this.port = port;
       this.app = express();
@@ -54,8 +52,8 @@ export class Client {
     codeExists(code) {  
       const folderName = '../shopping-lists/local/';
       const fileName = `local_client_${this.port}_list_${code}.json`;
-      const currentFilePath = fileURLToPath(import.meta.url);
-      const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+      const currentFilePath = fileURLToPath(url);
+      const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
 
       return fs.existsSync(filePath);
     }
@@ -99,3 +97,5 @@ export class Client {
       });
     }
 }
+
+module.exports = Client;

@@ -1,4 +1,4 @@
-import { Client } from './models/client.js';
+const Client = require('./models/client.js');
 
 const PORT = process.argv[2] || 5000; // Retrieve port from command line argument
 

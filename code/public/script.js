@@ -84,50 +84,50 @@ document.addEventListener("DOMContentLoaded", function() {
     function createListItem(name, desiredQuantity) {
         const lowercaseName = name.toLowerCase();
         const listItem = document.createElement("li");
-            listItem.dataset.name = lowercaseName; // Save the lowercase name in the dataset
+        listItem.dataset.name = lowercaseName; // Save the lowercase name in the dataset
+        listItem.dataset.quantity = desiredQuantity;
+        updateQuantity(lowercaseName, 0);
+
+        // Create a span to display the quantity
+        const quantitySpan = document.createElement("span");
+        quantitySpan.textContent = desiredQuantity;
+        quantitySpan.className = "quantity";
+
+        const capitalizedDisplayName = capitalizeFirstLetter(name);
+        listItem.textContent = `${capitalizedDisplayName} (Desired Quantity: `;
+
+        // Create buttons to update the quantity
+        const increaseButton = document.createElement("button");
+        increaseButton.textContent = "+";
+        const decreaseButton = document.createElement("button");
+        decreaseButton.textContent = "-";
+
+        // Add event listeners to the buttons
+        increaseButton.addEventListener("click", function() {
+            desiredQuantity++;
             listItem.dataset.quantity = desiredQuantity;
-            updateQuantity(lowercaseName, 0);
+            quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
+            updateQuantity(lowercaseName, 1);
+        });
     
-            // Create a span to display the quantity
-            const quantitySpan = document.createElement("span");
-            quantitySpan.textContent = desiredQuantity;
-            quantitySpan.className = "quantity";
-    
-            const capitalizedDisplayName = capitalizeFirstLetter(name);
-            listItem.textContent = `${capitalizedDisplayName} (Desired Quantity: `;
-    
-            // Create buttons to update the quantity
-            const increaseButton = document.createElement("button");
-            increaseButton.textContent = "+";
-            const decreaseButton = document.createElement("button");
-            decreaseButton.textContent = "-";
-    
-            // Add event listeners to the buttons
-            increaseButton.addEventListener("click", function() {
-                desiredQuantity++;
-                listItem.dataset.quantity = desiredQuantity;
+        decreaseButton.addEventListener("click", function() {
+            desiredQuantity--;
+            listItem.dataset.quantity = desiredQuantity;
+
+            if (desiredQuantity === 0) {
+                shoppingList.removeChild(listItem); // Remove item if quantity is 0
+                updateQuantity(lowercaseName, -1);
+            } else {
                 quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                updateQuantity(lowercaseName, 1);
-            });
-    
-            decreaseButton.addEventListener("click", function() {
-                desiredQuantity--;
-                listItem.dataset.quantity = desiredQuantity;
-    
-                if (desiredQuantity === 0) {
-                    shoppingList.removeChild(listItem); // Remove item if quantity is 0
-                    updateQuantity(lowercaseName, -1);
-                } else {
-                    quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                    updateQuantity(lowercaseName, -1);
-                }
-            });
-    
-            // Append the span and buttons to the list item
-            listItem.appendChild(quantitySpan);
-            listItem.appendChild(increaseButton);
-            listItem.appendChild(decreaseButton);
-            shoppingList.appendChild(listItem);
+                updateQuantity(lowercaseName, -1);
+            }
+        });
+
+        // Append the span and buttons to the list item
+        listItem.appendChild(quantitySpan);
+        listItem.appendChild(increaseButton);
+        listItem.appendChild(decreaseButton);
+        shoppingList.appendChild(listItem);
     }
     
 
@@ -205,20 +205,20 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     function capitalizeFirstLetter(str) {
-    // Check if str is defined
-    if (str) {
-        // Convert special characters to their standard counterparts
-        const normalizedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Check if str is defined
+        if (str) {
+            // Convert special characters to their standard counterparts
+            const normalizedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-        // Capitalize the first letter of each word
-        const capitalizedStr = normalizedStr.replace(/\b\w/g, c => c.toUpperCase());
+            // Capitalize the first letter of each word
+            const capitalizedStr = normalizedStr.replace(/\b\w/g, c => c.toUpperCase());
 
-        return capitalizedStr;
-    } else {
-        // If str is not defined, return an empty string or handle it as needed
-        return '';
+            return capitalizedStr;
+        } else {
+            // If str is not defined, return an empty string or handle it as needed
+            return '';
+        }
     }
-}
 
     
     

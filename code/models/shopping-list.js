@@ -1,11 +1,14 @@
-import fs from 'fs';
-import path from 'path';
-import { Item } from './item.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { AddWinSet } from '../crdts/add-win-set.js';
+const path = require('path');
+const fs = require('fs');
+const Item = require('./item.js');
+const fileURLToPath = require('url');
+//const dirname = require('__dirname');
+//const meta = require('meta');
+const AddWinSet = require('../crdts/add-win-set.js');
 
-export class ShoppingList {
+const WebSocket = require('ws');
+
+class ShoppingList {
     constructor(code, initialList) {
         this.code = code;
         this.itemsList = initialList;
@@ -55,8 +58,8 @@ export class ShoppingList {
             items: this.itemsList,
         };
     
-        const currentFilePath = fileURLToPath(import.meta.url);
-        const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = fileURLToPath(url);
+        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
     
         // Make sure the folder exists, create if not
         if (!fs.existsSync(path.join('..', folderName))) {
@@ -74,8 +77,8 @@ export class ShoppingList {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
 
-        const currentFilePath = fileURLToPath(import.meta.url);
-        const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = fileURLToPath(url);
+        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
 
 
         if (!fs.existsSync(filePath)) {
@@ -101,8 +104,8 @@ export class ShoppingList {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
 
-        const currentFilePath = fileURLToPath(import.meta.url);
-        const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = fileURLToPath(url);
+        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
 
         console.log(`Creating a new file with code ${this.code}...`);
     
@@ -119,3 +122,5 @@ export class ShoppingList {
     }
 
 }
+
+module.exports = ShoppingList;

@@ -1,11 +1,9 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import { Client } from './client.js';
-import { Item } from './item.js';
+const express = require('express');
+const bodyParser = require('body-parser');
 
-import { WebSocket } from 'ws';
+const WebSocket = require('ws');
 
-export class Server {
+class Server {
   constructor() {
     this.app = express();
     this.routerSocket = new WebSocket('ws://localhost:8080'); // Connect to the router - add router port
@@ -65,3 +63,5 @@ export class Server {
     console.log(`Server is running on port ${port}`);
   }*/
 }
+
+module.exports = Server;
