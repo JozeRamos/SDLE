@@ -3,43 +3,55 @@ import path from 'path';
 import { Item } from './item.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { AddWinSet } from '../crdts/add-win-set.js';
 
 export class ShoppingList {
     constructor(code, initialList) {
         this.code = code;
         this.itemsList = initialList;
+        this.addWinSet = new AddWinSet();
     }
 
-    addItem(item) {
-        if(item.desiredQuantity==0) {
-            this.removeItem(item);
-            return;
-        }
+    // addItem(item) {
+    //     if(item.desiredQuantity==0) {
+    //         this.removeItem(item);
+    //         return;
+    //     }
 
-        // Check if an item with the same name already exists in the list
-        for (const i in this.itemsList) {
-            if (this.itemsList[i].name === item.name) {
-                this.itemsList[i].changeDesiredQuantity(item.desiredQuantity);
-                return;
-            }
-        }
-        this.itemsList.push(item);
-    }
+    //     // Check if an item with the same name already exists in the list
+    //     for (const i in this.itemsList) {
+    //         if (this.itemsList[i].name === item.name) {
+    //             this.itemsList[i].changeDesiredQuantity(item.desiredQuantity);
+    //             return;
+    //         }
+    //     }
+    //     this.itemsList.push(item);
+    // }
     
 
-    removeItem(item) {
-        this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
+    // removeItem(item) {
+    //     this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
+    // }
+
+    createList(elements) {
+        this.itemsList = [];
+        for (const itemName in elements) {
+            const quantity = elements[itemName];
+            const newItem = new Item(itemName, quantity);
+            this.itemsList.push(newItem);
+        }
     }
 
-    storeShoppingList() {
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+    storeShoppingList(port) {
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
+
+        this.createList(this.addWinSet.elements);
     
         // Include initial lines
         const data = {
             listId: this.code,
-            replicaId: 'unique-replica-identifier',
-            listName: 'Shopping List Name',
+            replicaId: fileName,
             items: this.itemsList,
         };
     
@@ -56,9 +68,11 @@ export class ShoppingList {
     }
     
 
-    loadShoppingList() {
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+    loadShoppingList(port) {
+        this.addWinSet = new AddWinSet();
+
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
 
         const currentFilePath = fileURLToPath(import.meta.url);
         const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
@@ -73,18 +87,19 @@ export class ShoppingList {
 
         for (const itemName in data.items) {
             const itemData = data.items[itemName];
-            const newItem = new Item(itemData.name, itemData.desiredQuantity);
-            this.addItem(newItem);
+            // const newItem = new Item(itemData.name, itemData.desiredQuantity);
+            // this.addItem(newItem);
+            this.addWinSet = this.addWinSet.add(itemData.name, itemData.desiredQuantity);
         }
 
         return data;
     }
 
-    createShoppingList() {
+    createShoppingList(port) {
         this.itemsList = [];
 
-        const folderName = 'shopping-lists/';
-        const fileName = `${this.code}.json`;
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
 
         const currentFilePath = fileURLToPath(import.meta.url);
         const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
@@ -94,8 +109,7 @@ export class ShoppingList {
         // Create an empty data object to write to the new file
         const newData = {
             listId: this.code,
-            replicaId: 'unique-replica-identifier',
-            listName: 'Shopping List Name',
+            replicaId: fileName,
             items: {},
         };
 

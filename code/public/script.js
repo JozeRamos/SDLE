@@ -27,9 +27,10 @@ document.addEventListener("DOMContentLoaded", function() {
             // If an item with the same name exists, update its quantity
             const existingQuantity = parseInt(existingItem.dataset.quantity);
             const newQuantity = existingQuantity + desiredQuantity;
+            const quantityDifference = newQuantity - existingQuantity;
             existingItem.dataset.quantity = newQuantity;
             existingItem.querySelector(".quantity").textContent = newQuantity; // Update the quantity in the span
-            updateQuantity(lowercaseName, newQuantity);
+            updateQuantity(lowercaseName, quantityDifference);
         } else {
             // If no item with the same name exists, create a new list item
             const listItem = document.createElement("li");
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 desiredQuantity++;
                 listItem.dataset.quantity = desiredQuantity;
                 quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                updateQuantity(lowercaseName, desiredQuantity);
+                updateQuantity(lowercaseName, 1);
             });
     
             decreaseButton.addEventListener("click", function() {
@@ -65,10 +66,10 @@ document.addEventListener("DOMContentLoaded", function() {
     
                 if (desiredQuantity === 0) {
                     shoppingList.removeChild(listItem); // Remove item if quantity is 0
-                    updateQuantity(lowercaseName, 0);
+                    updateQuantity(lowercaseName, -1);
                 } else {
                     quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
-                    updateQuantity(lowercaseName, desiredQuantity);
+                    updateQuantity(lowercaseName, -1);
                 }
             });
     
@@ -78,18 +79,67 @@ document.addEventListener("DOMContentLoaded", function() {
             listItem.appendChild(decreaseButton);
             shoppingList.appendChild(listItem);
         }
-    }    
+    }   
+
+    function createListItem(name, desiredQuantity) {
+        const lowercaseName = name.toLowerCase();
+        const listItem = document.createElement("li");
+            listItem.dataset.name = lowercaseName; // Save the lowercase name in the dataset
+            listItem.dataset.quantity = desiredQuantity;
+            updateQuantity(lowercaseName, 0);
+    
+            // Create a span to display the quantity
+            const quantitySpan = document.createElement("span");
+            quantitySpan.textContent = desiredQuantity;
+            quantitySpan.className = "quantity";
+    
+            const capitalizedDisplayName = capitalizeFirstLetter(name);
+            listItem.textContent = `${capitalizedDisplayName} (Desired Quantity: `;
+    
+            // Create buttons to update the quantity
+            const increaseButton = document.createElement("button");
+            increaseButton.textContent = "+";
+            const decreaseButton = document.createElement("button");
+            decreaseButton.textContent = "-";
+    
+            // Add event listeners to the buttons
+            increaseButton.addEventListener("click", function() {
+                desiredQuantity++;
+                listItem.dataset.quantity = desiredQuantity;
+                quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
+                updateQuantity(lowercaseName, 1);
+            });
+    
+            decreaseButton.addEventListener("click", function() {
+                desiredQuantity--;
+                listItem.dataset.quantity = desiredQuantity;
+    
+                if (desiredQuantity === 0) {
+                    shoppingList.removeChild(listItem); // Remove item if quantity is 0
+                    updateQuantity(lowercaseName, -1);
+                } else {
+                    quantitySpan.textContent = desiredQuantity; // Update the quantity in the span
+                    updateQuantity(lowercaseName, -1);
+                }
+            });
+    
+            // Append the span and buttons to the list item
+            listItem.appendChild(quantitySpan);
+            listItem.appendChild(increaseButton);
+            listItem.appendChild(decreaseButton);
+            shoppingList.appendChild(listItem);
+    }
     
 
     // Function to update the quantity on the server
-    function updateQuantity(name, newQuantity) {
+    function updateQuantity(name, quantityDifference) {
         // Send a POST request to update the JSON file on the server
         fetch('/update-list', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, desiredQuantity: newQuantity }),
+            body: JSON.stringify({ name, quantityDifference}),
         })
         .then(response => response.json())
         .then(data => {
@@ -141,17 +191,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .then(data => {
-                // Check if data is an array and not empty
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(item => {
-                        const { name, desiredQuantity } = item;
-    
-                        // Skip rendering items with a quantity of 0
-                        if (desiredQuantity > 0) {
-                            const capitalizedItemName = capitalizeFirstLetter(name);
-                            addListItem(capitalizedItemName, desiredQuantity);
-                        }
-                    });
+                title.textContent = `Shopping List ${data.code}`;
+
+                for (const itemName in data.itemsList) {
+                    const quantity = data.itemsList[itemName];
+                    createListItem(itemName, quantity);
                 }
             })
             .catch(error => {
