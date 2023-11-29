@@ -5,6 +5,65 @@ document.addEventListener("DOMContentLoaded", function() {
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
     const title = document.getElementById("title");
+    const merge = document.getElementById("merge");
+
+    //Add an event listener for click
+    merge.addEventListener("click", async function() {
+        // Replace 'your_server_url' with the actual URL of your server
+        const serverUrl = 'http://localhost:'; // Update the port if necessary
+    
+        let exist = false;
+    
+        // Example message data
+        let message = {
+            sender: 'Cloud',
+            content: 'sad',
+        };
+    
+        try {
+            for (let i = 3000; i <= 3002; i++) {
+                const response = await fetch(`${serverUrl + String(i)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(message),
+                });
+    
+                const responseData = await response.json();
+    
+                console.log('Response from server:', responseData);
+    
+                if (responseData) {
+                    exist = true;
+                }
+            }            
+            if (!exist) {
+                message = {
+                    sender: 'Local',
+                    content: '5000',
+                };
+                let server = [];
+                for (let i = 3000; i <= 3002; i++) {
+                    const response = await fetch(`${serverUrl + String(i)}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(message),
+                    });
+    
+                    const responseData = await response.json();
+    
+                    console.log('Response from server:', responseData);
+                    server.push({ key: String(i), value: responseData });
+                }
+            }
+        } catch (error) {
+            console.error('Error sending request:', error.message);
+        }
+    });
+    
 
     // Add an event listener for click
     title.addEventListener("click", function() {

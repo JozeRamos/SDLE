@@ -1,0 +1,10 @@
+{
+  "listId": "p00c1ZXZ",
+  "replicaId": "local_client_5000_list_p00c1ZXZ.json",
+  "items": [
+    {
+      "name": "sda",
+      "desiredQuantity": 3
+    }
+  ]
+}

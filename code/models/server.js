@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
+import cors from 'cors';
 
 export class Server {
   constructor() {
@@ -10,6 +11,7 @@ export class Server {
 
   async init(port) {
     this.app.use(bodyParser.json());
+    this.app.use(cors()); // Enable CORS for all routes
 
     // requests go here
     this.app.use((req, res, next) => {
@@ -24,10 +26,10 @@ export class Server {
       else if (sender == "Cloud"){
         console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
         if (content in this.dic) {
-          res.send(`${content} is in the dictionary.`); // Respond with elem is in dictionary
+          res.send(`${true}`); // Respond with elem is in dictionary
         }
         else {
-          res.send(`${content} is not in the dictionary.`); // Respond with elem is not in dictionary
+          res.send(`${false}`); // Respond with elem is not in dictionary
         }
         
       }
