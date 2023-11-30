@@ -12,14 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
         // Replace 'your_server_url' with the actual URL of your server
         const serverUrl = 'http://localhost:'; // Update the port if necessary
     
-        let exist = false;
     
         // Example message data
         let message = {
             sender: 'Cloud',
-            content: 'sad',
+            content: 'banana',
         };
-    
+        
+        let servers = []
+
         try {
             for (let i = 3000; i <= 3002; i++) {
                 const response = await fetch(`${serverUrl + String(i)}`, {
@@ -35,15 +36,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log('Response from server:', responseData);
     
                 if (responseData) {
-                    exist = true;
+                    servers.push(i);
                 }
             }            
-            if (!exist) {
+            if (servers.length == 0) {
                 message = {
                     sender: 'Local',
                     content: '5000',
                 };
-                let server = [];
                 for (let i = 3000; i <= 3002; i++) {
                     const response = await fetch(`${serverUrl + String(i)}`, {
                         method: 'POST',
@@ -54,14 +54,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
     
                     const responseData = await response.json();
-    
+                    
                     console.log('Response from server:', responseData);
-                    server.push({ key: String(i), value: responseData });
+                    servers.push({ key: i, value: responseData });
                 }
             }
         } catch (error) {
             console.error('Error sending request:', error.message);
         }
+        console.log(servers)
     });
     
 
