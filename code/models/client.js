@@ -74,7 +74,7 @@ class Client {
       this.app.post('/manage-code', (req, res) => {
         this.changeCode(req.body.code);
 
-        if(!this.codeExists(req.body.code)) {
+        if(!this.codeExists(req.body.code) && req.body.code) {
           this.searchCloudForList(req.body.code);
         }
 
