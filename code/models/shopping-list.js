@@ -58,8 +58,8 @@ class ShoppingList {
             items: this.itemsList,
         };
     
-        const currentFilePath = fileURLToPath(url);
-        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
     
         // Make sure the folder exists, create if not
         if (!fs.existsSync(path.join('..', folderName))) {
@@ -77,8 +77,8 @@ class ShoppingList {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
 
-        const currentFilePath = fileURLToPath(url);
-        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
 
         if (!fs.existsSync(filePath)) {
@@ -104,8 +104,8 @@ class ShoppingList {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
 
-        const currentFilePath = fileURLToPath(url);
-        const filePath = path.join(__dirname(currentFilePath), '..', folderName, fileName);
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
         console.log(`Creating a new file with code ${this.code}...`);
     
