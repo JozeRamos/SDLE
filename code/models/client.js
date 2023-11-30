@@ -32,11 +32,14 @@ class Client {
     }
 
     searchCloudForList(listCode) {
+      var code_in_cloud = false;
       this.routerSocket.send(JSON.stringify(listCode));
       this.routerSocket.on('message', (message) => {
         console.log('Received list from router');
         this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
+        code_in_cloud = true;
       });
+      return code_in_cloud;
     }
 
     changeCode(code) {
@@ -55,7 +58,7 @@ class Client {
         for (let i = 0; i < codeLength; i++) {
           newCode += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-      } while (this.codeExistsLocally(newCode));
+      } while (this.codeExistsLocally(newCode) || this.searchCloudForList(newCode));
 
       this.code = newCode;
       this.shopping_list.code = newCode;
