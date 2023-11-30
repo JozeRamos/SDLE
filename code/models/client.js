@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const ShoppingList = require('./shopping-list.js');
-const MessageClass = require('./message.js');
 
 const WebSocket = require('ws');
+const { resourceUsage } = require('process');
 
 class Client {
     constructor(port, code) {
@@ -34,7 +34,8 @@ class Client {
     searchCloudForList(listCode) {
       this.routerSocket.send(JSON.stringify(listCode));
       this.routerSocket.on('message', (message) => {
-        console.log(JSON.parse(message));
+        console.log('Received list from router.');
+        this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
       });
     }
 
@@ -71,8 +72,12 @@ class Client {
   
     executeShoppingList() {
       this.app.post('/manage-code', (req, res) => {
-        if(!this.codeExists(req.body.code)) this.searchCloudForList(req.body.code);
         this.changeCode(req.body.code);
+
+        if(!this.codeExists(req.body.code)) {
+          this.searchCloudForList(req.body.code);
+        }
+
         if (req.body.message === "new list") {
           this.createRandomCode();
           this.shopping_list.createShoppingList(this.port);

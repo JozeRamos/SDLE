@@ -121,6 +121,18 @@ class ShoppingList {
         console.log(`New shopping list file created at ${filePath}`);
     }
 
+    pullShoppingList(port,data) {
+        const folderName = 'shopping-lists/local/';
+        const fileName = `local_client_${port}_list_${this.code}.json`;
+
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
+
+        // Write the new file with the empty data
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+        console.log(`New shopping list file created at ${filePath}`);
+    }
+
 }
 
 module.exports = ShoppingList;

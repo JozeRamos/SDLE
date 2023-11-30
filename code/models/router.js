@@ -1,7 +1,6 @@
 const WebSocket = require('ws');
 const routerSocket = new WebSocket.Server({ port: 8080 });
 
-const MessageClass = require('./message.js');
 
 const servers = []; // List of active servers
 var client = null; // List of active clients
@@ -14,8 +13,10 @@ routerSocket.on('connection', (connection) => {
 
     connection.on('message', (message) => {
       // Handle messages from servers if needed
-      console.log(`Received message from server:`, JSON.parse(message));
-      client.send(message);
+      if(JSON.parse(message)!=="List not found") {
+        console.log('Received list from router.');
+        client.send(message);
+      }
     });
 
     connection.on('close', () => {
