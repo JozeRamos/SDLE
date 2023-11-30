@@ -12,11 +12,29 @@ class Server {
 
   async init(port) {
     this.app.use(bodyParser.json());
-    //this.app.use(express.static('public'));
 
     this.routerSocket.on('open', () => {
       console.log('Connected to router');
     });
+
+    this.app.get('/', (req, res) => {
+      const serverNum = Math.abs(port) % 10;
+      const folderName = `/shopping-lists/cloud/server${serverNum}/`;
+    
+      fs.readdir(path.join(__dirname, '..', folderName), (err, files) => {
+        if (err) {
+          console.error('Error reading directory:', err);
+          res.send(`<h1>List Codes Available:</h1><ul>No List Available</ul>`);
+        } else {
+          const listCodes = files.map((file) => {
+            const match = file.match(/^server_\d+_list_(.+)\.json$/);
+            return match ? `<li>${match[1]}</li>` : '';
+          });
+          res.send(`<h1>List Codes Available:</h1><ul>${listCodes.join('')}</ul>`);
+        }
+      });
+    });
+    
 
     this.app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
@@ -41,43 +59,8 @@ class Server {
 
       });
 
-      // Example of how a server might send its list data to the router
-      //const listData = { listId: 'unique_id', items: [] };
-      //this.routerSocket.send(JSON.stringify(listData));
     });
   }
-
-  /*executeShoppingList(port) {
-    const client = new Client(port, null);
-
-    this.app.use(express.static('public'));
-    this.app.use(express.json());
-
-    this.app.post('/manage-code', (req, res) => {
-      client.changeCode(req.body.code);
-      if (req.body.message === "new list") {
-        client.shopping_list.createShoppingList();
-      }
-      res.json({ message: 'List code updated successfully' });
-    });
-
-    this.app.get('/api/shopping-list', (req, res) => {
-      if(!client.shopping_list.loadShoppingList()){
-        res.redirect('/');
-      }
-      else {res.json(client.shopping_list.itemsList);}
-    });
-
-    // Inside your '/update-list' route
-    this.app.post('/update-list', (req, res) => {
-        client.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
-        client.shopping_list.storeShoppingList();
-        res.json({ message: 'List updated successfully' });
-    });
-
-
-    console.log(`Server is running on port ${port}`);
-  }*/
 }
 
 module.exports = Server;
