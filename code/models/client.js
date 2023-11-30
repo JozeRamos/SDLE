@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const ShoppingList = require('./shopping-list.js');
-const fileURLToPath = require('url');
+const MessageClass = require('./message.js');
 
 const WebSocket = require('ws');
 
@@ -13,7 +13,7 @@ class Client {
       this.app = express();
       this.code = code;
       this.shopping_list =  new ShoppingList(code, []);
-      this.routerSocket = new WebSocket('ws://localhost:8080'); // Connect to the router
+      this.routerSocket = new WebSocket('ws://localhost:8080', 'client'); // Connect to the router
     }
 
     async init() {
@@ -24,6 +24,17 @@ class Client {
       this.app.listen(this.port, () => {
         console.log(`Client is running on http://localhost:${this.port}`);
         this.executeShoppingList();
+      });
+
+      this.routerSocket.on('open', () => {
+        console.log('Connected to router');
+      });
+    }
+
+    searchCloudForList(listCode) {
+      this.routerSocket.send(JSON.stringify(listCode));
+      this.routerSocket.on('message', (message) => {
+        console.log(JSON.parse(message));
       });
     }
 
@@ -60,6 +71,7 @@ class Client {
   
     executeShoppingList() {
       this.app.post('/manage-code', (req, res) => {
+        this.searchCloudForList(req.body.code);
         this.changeCode(req.body.code);
         if (req.body.message === "new list") {
           this.createRandomCode();

@@ -1,12 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const path = require('path');
+const fs = require('fs');
 const WebSocket = require('ws');
 
 class Server {
   constructor() {
     this.app = express();
-    this.routerSocket = new WebSocket('ws://localhost:8080'); // Connect to the router - add router port
+    this.routerSocket = new WebSocket('ws://localhost:8080', 'server'); // Connect to the router - add router port
   }
 
   async init(port) {
@@ -22,7 +23,22 @@ class Server {
 
       this.routerSocket.on('message', (message) => {
         // Handle messages from the router if needed
-        console.log('Received message from router:', message);
+        console.log('Received message from router:', JSON.parse(message));
+
+        const server = Math.abs(port) % 10
+
+        const folderName = `/shopping-lists/cloud/server${server}/`;
+        const fileName = `server_${server}_list_${JSON.parse(message)}.json`;
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
+
+        if(fs.existsSync(filePath)) {
+          this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
+          //this.routerSocket.send(JSON.stringify("List found"));
+        } else {
+          this.routerSocket.send(JSON.stringify("List not found"));
+        }
+
       });
 
       // Example of how a server might send its list data to the router

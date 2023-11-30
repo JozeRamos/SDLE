@@ -1,4 +1,4 @@
-import { Server } from './models/server.js';
+const Server = require('./models/server.js');
 
 const PORT1 = process.env.PORT || 3000;
 const PORT2 = process.env.PORT || 3001;
