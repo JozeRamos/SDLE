@@ -1,0 +1,10 @@
+{
+  "listId": "example",
+  "replicaId": "local_client_5000_list_example.json",
+  "items": [
+    {
+      "name": "salt",
+      "desiredQuantity": 100
+    }
+  ]
+}

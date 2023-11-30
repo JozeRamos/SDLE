@@ -11,15 +11,32 @@ document.addEventListener("DOMContentLoaded", function() {
     merge.addEventListener("click", async function() {
         // Replace 'your_server_url' with the actual URL of your server
         const serverUrl = 'http://localhost:'; // Update the port if necessary
-    
-    
-        // Example message data
-        let message = {
-            sender: 'Cloud',
-            content: 'banana',
-        };
         
+        // Message data
+        let message;
+        
+        await fetch('/api/shopping-list')
+            .then(response => {
+                if (response.redirected) {
+                    // Handle redirection
+                    window.location.href = response.url;
+                    return Promise.reject('Redirection occurred');
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                message = {
+                    sender: 'Cloud',
+                    content: `${data.code}`,
+                };
+            })
+            .catch(error => {
+                console.error('Error fetching initial data:', error);
+            });
+            
         let servers = []
+
 
         try {
             for (let i = 3000; i <= 3002; i++) {
