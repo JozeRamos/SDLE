@@ -14,7 +14,7 @@ routerSocket.on('connection', (connection) => {
     connection.on('message', (message) => {
       // Handle messages from servers if needed
       if(JSON.parse(message)!=="List not found") {
-        console.log('Received list from router.');
+        console.log('Received list from server');
         client.send(message);
       }
     });

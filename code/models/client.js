@@ -34,7 +34,7 @@ class Client {
     searchCloudForList(listCode) {
       this.routerSocket.send(JSON.stringify(listCode));
       this.routerSocket.on('message', (message) => {
-        console.log('Received list from router.');
+        console.log('Received list from router');
         this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
       });
     }
@@ -55,13 +55,13 @@ class Client {
         for (let i = 0; i < codeLength; i++) {
           newCode += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-      } while (this.codeExists(newCode));
+      } while (this.codeExistsLocally(newCode));
 
       this.code = newCode;
       this.shopping_list.code = newCode;
     }
 
-    codeExists(code) {  
+    codeExistsLocally(code) {  
       const folderName = '/shopping-lists/local/';
       const fileName = `local_client_${this.port}_list_${code}.json`;
       const currentFilePath = __filename;
@@ -74,7 +74,7 @@ class Client {
       this.app.post('/manage-code', (req, res) => {
         this.changeCode(req.body.code);
 
-        if(!this.codeExists(req.body.code) && req.body.code) {
+        if(!this.codeExistsLocally(req.body.code) && req.body.code) {
           this.searchCloudForList(req.body.code);
         }
 
