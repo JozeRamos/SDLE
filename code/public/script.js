@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (servers.length == 0) {
                 message = {
                     sender: 'Local',
-                    content: '5000',
+                    content: `${window.location.port}`,
                 };
                 for (let i = 3000; i <= 3002; i++) {
                     const response = await fetch(`${serverUrl + String(i)}`, {
