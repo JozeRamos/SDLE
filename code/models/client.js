@@ -61,7 +61,7 @@ class Client {
     }
 
     codeExists(code) {  
-      const folderName = '../shopping-lists/local/';
+      const folderName = '/shopping-lists/local/';
       const fileName = `local_client_${this.port}_list_${code}.json`;
       const currentFilePath = __filename;
       const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
@@ -71,7 +71,7 @@ class Client {
   
     executeShoppingList() {
       this.app.post('/manage-code', (req, res) => {
-        this.searchCloudForList(req.body.code);
+        if(!this.codeExists(req.body.code)) this.searchCloudForList(req.body.code);
         this.changeCode(req.body.code);
         if (req.body.message === "new list") {
           this.createRandomCode();
