@@ -1,10 +1,13 @@
+// define addItemBut
+const shoppingList = document.getElementById("shopping-list");
+const addItemButton = document.getElementById("add");
+const nameInput = document.getElementById("name");
+const desiredQuantityInput = document.getElementById("desired-quantity");
+const title = document.getElementById("title");
+
+
 function initialize() {
-    // Get references to the HTML elements
-    const shoppingList = document.getElementById("shopping-list");
-    const addItemButton = document.getElementById("add");
-    const nameInput = document.getElementById("name");
-    const desiredQuantityInput = document.getElementById("desired-quantity");
-    const title = document.getElementById("title");
+
 
     // Add event listener to the "Add" button
     addItemButton.addEventListener("click", function() {
@@ -97,17 +100,20 @@ function createListItem(name, desiredQuantity) {
 
 // Function to update the quantity on the server
 function updateQuantity(name, quantityDifference) {
-    // Send a POST request to update the JSON file on the server
     fetch('/update-list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, quantityDifference}),
+        body: JSON.stringify({ name, quantityDifference }),
     })
-    .then(response => response.json())
+    .then(response => {
+        // Log the response before parsing
+        console.log('Response:', response);
+        return response.json();
+    })
     .then(data => {
-        console.log(data.message); // Log the response from the server
+        console.log(data.message);
     })
     .catch(error => {
         console.error('Error:', error);
@@ -237,4 +243,4 @@ function capitalizeFirstLetter(str) {
     desiredQuantityInput.addEventListener("keypress", handleEnterKey);
 }
 
-document.addEventListener("DOMContentLoaded", initializeShoppingList);
+document.addEventListener("DOMContentLoaded", initialize);
