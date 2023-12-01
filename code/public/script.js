@@ -1,52 +1,54 @@
-// define addItemBut
+
+// Get references to the HTML elements
 const shoppingList = document.getElementById("shopping-list");
 const addItemButton = document.getElementById("add");
 const nameInput = document.getElementById("name");
 const desiredQuantityInput = document.getElementById("desired-quantity");
 const title = document.getElementById("title");
 
+// Add an event listener for click on title
+title.addEventListener("click", function() {
+    window.location.href = '/';
+});
 
-function initialize() {
+// Add an event listener to desired quantity input
+document.getElementById('desired-quantity').addEventListener('input', function() {
+    // Replace any non-digit characters with an empty string
+    this.value = this.value.replace(/\D/g, '');
+});
 
-
-    // Add event listener to the "Add" button
-    addItemButton.addEventListener("click", function() {
-        const name = nameInput.value.trim();
-        let desiredQuantity = desiredQuantityInput.value.trim();
-
-        if (name !== "") {
-            // Set quantity to 1 if it's empty
-            if (desiredQuantity === "") {
-                desiredQuantity = 1;
-                addListItem(name, desiredQuantity);
-            } else {
-                desiredQuantity = parseInt(desiredQuantity);
-                if (desiredQuantity >0) {
-                    addListItem(name, desiredQuantity);
-                }
-            }
-            // Clear the input fields
-            nameInput.value = "";
-            desiredQuantityInput.value = "";
+// Function to update the quantity on the server
+function updateQuantity(name, quantityDifference) {
+    fetch('/update-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, quantityDifference}),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle errors or unexpected responses here
     });
+}
 
-    // Add an event listener for click
-    title.addEventListener("click", function() {
-        window.location.href = '/';
-    });
 
-    document.getElementById('desired-quantity').addEventListener('input', function() {
-        // Replace any non-digit characters with an empty string
-        this.value = this.value.replace(/\D/g, '');
-    });
 
-    // Adicionar event listeners aos campos de entrada para a tecla "Enter"
-    nameInput.addEventListener("keypress", handleEnterKey);
-    desiredQuantityInput.addEventListener("keypress", handleEnterKey);
-
-    
-}   
+// Function to handle the "Enter" key event
+function handleEnterKey(event) {
+    if (event.key === "Enter") {
+        addItemButton.click();
+    }
+}
 
 function createListItem(name, desiredQuantity) {
     const lowercaseName = name.toLowerCase();
@@ -95,36 +97,6 @@ function createListItem(name, desiredQuantity) {
     listItem.appendChild(increaseButton);
     listItem.appendChild(decreaseButton);
     shoppingList.appendChild(listItem);
-}
-    
-
-// Function to update the quantity on the server
-function updateQuantity(name, quantityDifference) {
-    fetch('/update-list', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, quantityDifference }),
-    })
-    .then(response => {
-        // Log the response before parsing
-        console.log('Response:', response);
-        return response.json();
-    })
-    .then(data => {
-        console.log(data.message);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-// Function to handle the "Enter" key event
-function handleEnterKey(event) {
-    if (event.key === "Enter") {
-        addItemButton.click();
-    }
 }
 
 function addListItem(name, desiredQuantity) {
@@ -190,33 +162,32 @@ function addListItem(name, desiredQuantity) {
         listItem.appendChild(decreaseButton);
         shoppingList.appendChild(listItem);
     }
-}
+}  
 
-
+// Function to fetch initial data
 function fetchInitialData() {
-    fetch('/api/shopping-list')
-        .then(response => {
-            if (response.redirected) {
-                // Handle redirection
-                window.location.href = response.url;
-                return Promise.reject('Redirection occurred');
-            } else {
-                return response.json();
-            }
-        })
-        .then(data => {
-            title.textContent = `Shopping List ${data.code}`;
+fetch('/api/shopping-list')
+    .then(response => {
+        if (response.redirected) {
+            // Handle redirection
+            window.location.href = response.url;
+            return Promise.reject('Redirection occurred');
+        } else {
+            return response.json();
+        }
+    })
+    .then(data => {
+        title.textContent = `Shopping List ${data.code}`;
 
-            for (const itemName in data.itemsList) {
-                const quantity = data.itemsList[itemName];
-                createListItem(itemName, quantity);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching initial data:', error);
-        });
+        for (const itemName in data.itemsList) {
+            const quantity = data.itemsList[itemName];
+            createListItem(itemName, quantity);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching initial data:', error);
+    });
 }
-
 
 function capitalizeFirstLetter(str) {
     // Check if str is defined
@@ -232,15 +203,33 @@ function capitalizeFirstLetter(str) {
         // If str is not defined, return an empty string or handle it as needed
         return '';
     }
-
-
-
-    // Call the function to fetch and display the initial data when the page loads
-    fetchInitialData();
-
-    // Add event listener to the input fields for pressing Enter key
-    nameInput.addEventListener("keypress", handleEnterKey);
-    desiredQuantityInput.addEventListener("keypress", handleEnterKey);
 }
 
-document.addEventListener("DOMContentLoaded", initialize);
+// Call the function to fetch and display the initial data when the page loads
+fetchInitialData();
+
+// Add event listener to the input fields for pressing Enter key
+nameInput.addEventListener("keypress", handleEnterKey);
+desiredQuantityInput.addEventListener("keypress", handleEnterKey);
+
+// Add event listener to the "Add" button
+addItemButton.addEventListener("click", function() {
+    const name = nameInput.value.trim();
+    let desiredQuantity = desiredQuantityInput.value.trim();
+
+    if (name !== "") {
+        // Set quantity to 1 if it's empty
+        if (desiredQuantity === "") {
+            desiredQuantity = 1;
+            addListItem(name, desiredQuantity);
+        } else {
+            desiredQuantity = parseInt(desiredQuantity);
+            if (desiredQuantity > 0) {
+                addListItem(name, desiredQuantity);
+            }
+        }
+        // Clear the input fields
+        nameInput.value = "";
+        desiredQuantityInput.value = "";
+    }
+});
