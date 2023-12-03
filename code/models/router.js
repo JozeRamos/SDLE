@@ -33,6 +33,12 @@ routerSocket.on('connection', (connection) => {
     // Handle messages from clients
     connection.on('message', (message) => {
       console.log(`Received message from client:`, JSON.parse(message));
+      
+      const { sender } = JSON.parse(message);
+      const { content } = JSON.parse(message);
+
+      console.log(`Received message from client:`, sender, content);
+
 
       servers.forEach(serverConnection => {
         serverConnection.send(message);

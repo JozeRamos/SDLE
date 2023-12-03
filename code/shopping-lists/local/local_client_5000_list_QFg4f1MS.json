@@ -1,0 +1,66 @@
+{
+  "listId": "QFg4f1MS",
+  "replicaId": "local_client_5000_list_QFg4f1MS.json",
+  "items": [
+    {
+      "name": "banana",
+      "desiredQuantity": 16
+    },
+    {
+      "name": "fruta",
+      "desiredQuantity": 24
+    },
+    {
+      "name": "pera",
+      "desiredQuantity": 4
+    },
+    {
+      "name": "hh",
+      "desiredQuantity": 4
+    },
+    {
+      "name": "banana mutante",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "tomate",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "tomato",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "nozes",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "jj",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "mac",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "gagaaaaaa",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "hkkk",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "ioio",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "jhajkfba",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "ola",
+      "desiredQuantity": 1
+    }
+  ]
+}

@@ -21,31 +21,6 @@ class Server {
       console.log('Connected to router');
     });
 
-    // requests go here
-    this.app.use((req, res, next) => {
-      const { sender } = req.body;
-      const { content } = req.body;
-      
-      if (sender == "Local") {
-        console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
-        const dicLength = Object.keys(this.dic).length
-        res.send(`${dicLength}`); // Respond with number of lists
-      }
-      else if (sender == "Cloud"){
-        console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
-        if (content in this.dic) {
-          res.send(`${true}`); // Respond with elem is in dictionary
-        }
-        else {
-          res.send(`${false}`); // Respond with elem is not in dictionary
-        }
-        
-      }
-      else {
-        next()
-      }
-    });
-
     this.app.listen(this.port,() => {
       console.log(`Server is running on port ${this.port}`);
       this.executeLists(this.port);
@@ -54,20 +29,27 @@ class Server {
         // Handle messages from the router if needed
         console.log('Received message from router:', JSON.parse(message));
 
-        const server = Math.abs(this.port) % 10
+        const { sender } = JSON.parse(message);
+        const { content } = JSON.parse(message);
 
-        const folderName = `/shopping-lists/cloud/server${server}/`;
-        const fileName = `server_${server}_list_${JSON.parse(message)}.json`;
-        const currentFilePath = __filename;
-        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
-
-        if(fs.existsSync(filePath)) {
-          this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
-          //this.routerSocket.send(JSON.stringify("List found"));
-        } else {
-          this.routerSocket.send(JSON.stringify("List not found"));
+        if (sender == "Local") {
+          console.log(`Message received on port ${req.socket.localPort}: ${JSON.stringify(req.body)}`);
+          const dicLength = Object.keys(this.dic).length
+          res.send(`${dicLength}`); // Respond with number of lists
         }
-
+        else if (sender == "Cloud"){
+          if (content in this.dic) {
+            const folderName = `/shopping-lists/cloud/server${this.port}/`;
+            const fileName = `server_${this.port}_list_${content}.json`;
+            const currentFilePath = __filename;
+            const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
+            this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
+          }
+          else {
+            this.routerSocket.send(JSON.stringify("List not found"));
+          }
+          
+        }
       });
 
     });

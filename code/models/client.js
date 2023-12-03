@@ -33,7 +33,11 @@ class Client {
 
     searchCloudForList(listCode) {
       var code_in_cloud = false;
-      this.routerSocket.send(JSON.stringify(listCode));
+      const msg = {
+        sender: 'Cloud',
+        content: `${listCode}`,
+      };
+      this.routerSocket.send(JSON.stringify(msg));      
       this.routerSocket.on('message', (message) => {
         console.log('Received list from router');
         this.shopping_list.pullShoppingList(this.port,JSON.parse(message));

@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function() {
     //Add an event listener for click
     merge.addEventListener("click", async function() {
         // Replace 'your_server_url' with the actual URL of your server
-        const serverUrl = 'http://localhost:'; // Update the port if necessary
+        const serverUrl = 'ws://localhost:8080'; // Update the port if necessary
+        
         
         // Message data
         let message;
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             for (let i = 3000; i <= 3002; i++) {
-                const response = await fetch(`${serverUrl + String(i)}`, {
+                const response = await fetch(`${serverUrl}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     content: `${window.location.port}`,
                 };
                 for (let i = 3000; i <= 3002; i++) {
-                    const response = await fetch(`${serverUrl + String(i)}`, {
+                    const response = await fetch(`${serverUrl}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
