@@ -1,12 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const Item = require('./item.js');
-const fileURLToPath = require('url');
-//const dirname = require('__dirname');
-//const meta = require('meta');
 const AddWinSet = require('../crdts/add-win-set.js');
-
-const WebSocket = require('ws');
 
 class ShoppingList {
     constructor(code, initialList) {
@@ -73,13 +68,10 @@ class ShoppingList {
 
     loadShoppingList(port) {
         this.addWinSet = new AddWinSet();
-
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
-
         const currentFilePath = __filename;
         const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
-
 
         if (!fs.existsSync(filePath)) {
             console.log(`Shopping list with code ${this.code} does not exist.`);
@@ -132,7 +124,6 @@ class ShoppingList {
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
         console.log(`New shopping list file created at ${filePath}`);
     }
-
 }
 
 module.exports = ShoppingList;
