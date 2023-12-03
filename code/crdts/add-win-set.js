@@ -22,10 +22,7 @@ class AddWinSet {
   
     if (newSet.contains(item)) {
       newSet.elements[item] = Math.max(0, newSet.elements[item] - quantityToRemove);
-  
-      if (newSet.elements[item] === 0) {
-        delete newSet.elements[item];
-      }
+      // we don't delete the items with zero quantity, to have our ever-increasing lattice
     }
   
     return newSet;
@@ -43,7 +40,6 @@ class AddWinSet {
         if (quantity > mergedElements[item]) {
           mergedElements[item] = quantity;
         }
-        //mergedElements[item] += quantity;
       } else {
         if (!this.contains(item)) {
           mergedElements[item] = quantity;
