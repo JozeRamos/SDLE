@@ -1,12 +1,14 @@
-//const fs = require('fs');
+const fs = require('fs');
 
 class AddWinSet {
-  constructor(elements = {}) {
+  constructor(elements = {}, vectorClock = 0) {
     this.elements = elements;
+    this.vectorClock = vectorClock;
   }
 
   add(item, quantity) {
-    const newSet = new AddWinSet({ ...this.elements });
+    const updatedVectorClock = this.vectorClock + 1;
+    const newSet = new AddWinSet({ ...this.elements }, updatedVectorClock);
 
     if (newSet.contains(item)) {
       newSet.elements[item] += quantity;
@@ -18,7 +20,8 @@ class AddWinSet {
   }
 
   remove(item, quantityToRemove = 1) {
-    const newSet = new AddWinSet({ ...this.elements });
+    const updatedVectorClock = this.vectorClock + 1;
+    const newSet = new AddWinSet({ ...this.elements }, updatedVectorClock);
   
     if (newSet.contains(item)) {
       newSet.elements[item] = Math.max(0, newSet.elements[item] - quantityToRemove);
@@ -33,11 +36,16 @@ class AddWinSet {
   }
 
   merge(otherSet) {
+    let updatedVectorClock = this.vectorClock + 1;
+    if (otherSet.vectorClock > this.vectorClock) {
+      updatedVectorClock = otherSet.vectorClock + 1;
+    }
+
     const mergedElements = { ...this.elements };
 
     for (const [item, quantity] of Object.entries(otherSet.elements)) {
       if (mergedElements.hasOwnProperty(item)) {
-        if (quantity > mergedElements[item]) {
+        if (quantity !== mergedElements[item] && otherSet.vectorClock > this.vectorClock) {
           mergedElements[item] = quantity;
         }
       } else {
@@ -47,14 +55,14 @@ class AddWinSet {
       }
     }
 
-    return new AddWinSet(mergedElements);
+    return new AddWinSet(mergedElements, updatedVectorClock);
   }
   
-  // saveToFile(filename) {
-  //   const jsonContent = JSON.stringify(this.elements, null, 2);
-  //   fs.writeFileSync(filename, jsonContent);
-  //   console.log(`Set saved to ${filename}`);
-  // }
+  saveToFile(filename) {
+    const jsonContent = JSON.stringify(this.elements, null, 2);
+    fs.writeFileSync(filename, jsonContent);
+    console.log(`Set saved to ${filename}`);
+  }
 }
 
 module.exports = AddWinSet;
