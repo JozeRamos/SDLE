@@ -2,16 +2,24 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import cors from 'cors';
+const WebSocket = require('ws');
+const path = require('path');
 
 export class Server {
-  constructor() {
+  constructor(port) {
     this.app = express();
     this.dic = {};
+    this.port = port;
+    this.routerSocket = new WebSocket('ws://localhost:8080', 'server'); // Connect to the router
   }
 
-  async init(port) {
+  async init() {
     this.app.use(bodyParser.json());
     this.app.use(cors()); // Enable CORS for all routes
+
+    this.routerSocket.on('open', () => {
+      console.log('Connected to router');
+    });
 
     // requests go here
     this.app.use((req, res, next) => {
@@ -38,9 +46,30 @@ export class Server {
       }
     });
 
-    this.app.listen(port,'0.0.0.0',() => {
-      console.log(`Server is running on port ${port}`);
-      this.executeLists(port);
+    this.app.listen(this.port,() => {
+      console.log(`Server is running on port ${this.port}`);
+      this.executeLists(this.port);
+
+      this.routerSocket.on('message', (message) => {
+        // Handle messages from the router if needed
+        console.log('Received message from router:', JSON.parse(message));
+
+        const server = Math.abs(this.port) % 10
+
+        const folderName = `/shopping-lists/cloud/server${server}/`;
+        const fileName = `server_${server}_list_${JSON.parse(message)}.json`;
+        const currentFilePath = __filename;
+        const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
+
+        if(fs.existsSync(filePath)) {
+          this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
+          //this.routerSocket.send(JSON.stringify("List found"));
+        } else {
+          this.routerSocket.send(JSON.stringify("List not found"));
+        }
+
+      });
+
     });
   }
 
@@ -62,3 +91,5 @@ export class Server {
     
   }
 }
+
+module.exports = Server;

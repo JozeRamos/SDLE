@@ -1,18 +1,45 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import { ShoppingList } from "./shopping-list.js";
-import { Item } from './item.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import path from 'path';
-import fs from 'fs';
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const fs = require('fs');
+const ShoppingList = require('./shopping-list.js');
 
-export class Client {
+const WebSocket = require('ws');
+const { resourceUsage } = require('process');
+
+class Client {
     constructor(port, code) {
-      this.port = port;
       this.app = express();
+      this.port = port;
       this.code = code;
       this.shopping_list =  new ShoppingList(code, []);
+      this.routerSocket = new WebSocket('ws://localhost:8080', 'client'); // Connect to the router
+    }
+
+    async init() {
+      this.app.use(express.static('public'));
+      this.app.use(express.json());
+      this.app.use(bodyParser.json());
+  
+      this.app.listen(this.port, () => {
+        console.log(`Client is running on http://localhost:${this.port}`);
+        this.executeShoppingList();
+      });
+
+      this.routerSocket.on('open', () => {
+        console.log('Connected to router');
+      });
+    }
+
+    searchCloudForList(listCode) {
+      var code_in_cloud = false;
+      this.routerSocket.send(JSON.stringify(listCode));
+      this.routerSocket.on('message', (message) => {
+        console.log('Received list from router');
+        this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
+        code_in_cloud = true;
+      });
+      return code_in_cloud;
     }
 
     changeCode(code) {
@@ -31,35 +58,29 @@ export class Client {
         for (let i = 0; i < codeLength; i++) {
           newCode += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-      } while (this.codeExists(newCode));
+      } while (this.codeExistsLocally(newCode) || this.searchCloudForList(newCode));
 
       this.code = newCode;
       this.shopping_list.code = newCode;
     }
 
-    codeExists(code) {  
-      const folderName = '../shopping-lists/local/';
+    codeExistsLocally(code) {  
+      const folderName = '/shopping-lists/local/';
       const fileName = `local_client_${this.port}_list_${code}.json`;
-      const currentFilePath = fileURLToPath(import.meta.url);
-      const filePath = path.join(dirname(currentFilePath), '..', folderName, fileName);
+      const currentFilePath = __filename;
+      const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
       return fs.existsSync(filePath);
-    }
-
-    async init() {
-      this.app.use(express.static('public'));
-      this.app.use(express.json());
-      this.app.use(bodyParser.json());
-  
-      this.app.listen(this.port, () => {
-        console.log(`Client is running on http://localhost:${this.port}`);
-        this.executeShoppingList();
-      });
     }
   
     executeShoppingList() {
       this.app.post('/manage-code', (req, res) => {
         this.changeCode(req.body.code);
+
+        if(!this.codeExistsLocally(req.body.code) && req.body.code) {
+          this.searchCloudForList(req.body.code);
+        }
+
         if (req.body.message === "new list") {
           this.createRandomCode();
           this.shopping_list.createShoppingList(this.port);
@@ -96,3 +117,5 @@ export class Client {
       });
     }
 }
+
+module.exports = Client;

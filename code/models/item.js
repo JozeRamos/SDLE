@@ -1,4 +1,4 @@
-export class Item {
+class Item {
     constructor(name, desiredQuantity) {
         this.name = name;
         this.desiredQuantity = desiredQuantity;
@@ -16,3 +16,5 @@ export class Item {
         this.acquiredQuantity = newAcquiredQuantity;
     }
 }
+
+module.exports = Item;
