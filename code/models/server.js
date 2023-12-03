@@ -1,11 +1,11 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import fs from 'fs';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const cors = require('cors');
 const WebSocket = require('ws');
 const path = require('path');
 
-export class Server {
+class Server {
   constructor(port) {
     this.app = express();
     this.dic = {};
