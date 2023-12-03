@@ -5,12 +5,13 @@ const fs = require('fs');
 const WebSocket = require('ws');
 
 class Server {
-  constructor() {
+  constructor(port) {
     this.app = express();
-    this.routerSocket = new WebSocket('ws://localhost:8080', 'server'); // Connect to the router - add router port
+    this.port = port;
+    this.routerSocket = new WebSocket('ws://localhost:8080', 'server'); // Connect to the router
   }
 
-  async init(port) {
+  async init() {
     this.app.use(bodyParser.json());
 
     this.routerSocket.on('open', () => {
@@ -18,7 +19,7 @@ class Server {
     });
 
     this.app.get('/', (req, res) => {
-      const serverNum = Math.abs(port) % 10;
+      const serverNum = Math.abs(this.port) % 10;
       const folderName = `/shopping-lists/cloud/server${serverNum}/`;
     
       fs.readdir(path.join(__dirname, '..', folderName), (err, files) => {
@@ -36,14 +37,14 @@ class Server {
     });
     
 
-    this.app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
+    this.app.listen(this.port, () => {
+      console.log(`Server is running on http://localhost:${this.port}`);
 
       this.routerSocket.on('message', (message) => {
         // Handle messages from the router if needed
         console.log('Received message from router:', JSON.parse(message));
 
-        const server = Math.abs(port) % 10
+        const server = Math.abs(this.port) % 10
 
         const folderName = `/shopping-lists/cloud/server${server}/`;
         const fileName = `server_${server}_list_${JSON.parse(message)}.json`;

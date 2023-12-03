@@ -9,8 +9,8 @@ const { resourceUsage } = require('process');
 
 class Client {
     constructor(port, code) {
-      this.port = port;
       this.app = express();
+      this.port = port;
       this.code = code;
       this.shopping_list =  new ShoppingList(code, []);
       this.routerSocket = new WebSocket('ws://localhost:8080', 'client'); // Connect to the router

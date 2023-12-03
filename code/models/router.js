@@ -1,26 +1,24 @@
 const WebSocket = require('ws');
 const routerSocket = new WebSocket.Server({ port: 8080 });
 
-
-const servers = []; // List of active servers
-var client = null; // List of active clients
+const servers = [];
+var currentClient = null;
 
 routerSocket.on('connection', (connection) => {
   if (connection.protocol === 'server') {
-    // Handle server connections
     console.log(`Server connected`);
     servers.push(connection);
 
+    // Handle messages from servers
     connection.on('message', (message) => {
-      // Handle messages from servers if needed
-      if(JSON.parse(message)!=="List not found") {
+      if(JSON.parse(message) !== "List not found") {
         console.log('Received list from server');
-        client.send(message);
+        currentClient.send(message);
       }
     });
 
+    // Disconnects server
     connection.on('close', () => {
-      // Remove server from the list of active servers when it disconnects
       const index = servers.indexOf(connection);
       if (index !== -1) {
         servers.splice(index, 1);
@@ -29,23 +27,22 @@ routerSocket.on('connection', (connection) => {
     });
     // ...
   } else if (connection.protocol === 'client') {
-    // Handle client connections
     console.log(`Client connected`);
-    client = connection;
+    currentClient = connection;
 
+    // Handle messages from clients
     connection.on('message', (message) => {
-          // Handle messages from servers if needed
-          console.log(`Received message from client:`, JSON.parse(message));
+      console.log(`Received message from client:`, JSON.parse(message));
 
-          servers.forEach(serverConnection => {
-            serverConnection.send(message);
-          });
-        
+      servers.forEach(serverConnection => {
+        serverConnection.send(message);
+      });
     });
 
+    // Disconnects client
     connection.on('close', () => {
-        console.log(`Client disconnected`);
-      
+      currentClient = null;
+      console.log(`Client disconnected`);
     });
     // ...
   }
