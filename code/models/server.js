@@ -41,19 +41,32 @@ class Server {
       console.log(`Server is running on http://localhost:${this.port}`);
 
       this.routerSocket.on('message', (message) => {
-        // Handle messages from the router if needed
-        console.log('Received message from router:', JSON.parse(message));
-
+        const clientMessage = JSON.parse(message);
         const server = Math.abs(this.port) % 10
-
         const folderName = `/shopping-lists/cloud/server${server}/`;
-        const fileName = `server_${server}_list_${JSON.parse(message)}.json`;
+        const fileName = `server_${server}_list_${clientMessage[0]}.json`;
         const currentFilePath = __filename;
         const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
+
+        if(clientMessage[1]) {
+          console.log('Received list from router:', clientMessage[0]);
+
+          if (!fs.existsSync(path.join(path.dirname(currentFilePath), '..', folderName))) {
+            fs.mkdirSync(path.join(path.dirname(currentFilePath), '..', folderName));
+          }
+
+          clientMessage[1].replicaId = fileName;
+            
+          fs.writeFileSync(filePath, JSON.stringify(clientMessage[1], null, 2), 'utf8');
+          return;
+        }
+
+        // Handle messages from the router if needed
+        console.log('Received message from router:', clientMessage[0]);
+
         if(fs.existsSync(filePath)) {
           this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
-          //this.routerSocket.send(JSON.stringify("List found"));
         } else {
           this.routerSocket.send(JSON.stringify("List not found"));
         }

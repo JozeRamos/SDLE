@@ -1,0 +1,15 @@
+{
+  "listId": "vuXBeRmj",
+  "replicaId": "server_2_list_vuXBeRmj.json",
+  "vectorClock": 3,
+  "items": [
+    {
+      "name": "banana",
+      "desiredQuantity": 11
+    },
+    {
+      "name": "laranja",
+      "desiredQuantity": 2
+    }
+  ]
+}

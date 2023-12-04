@@ -33,13 +33,17 @@ class Client {
 
     searchCloudForList(listCode) {
       var code_in_cloud = false;
-      this.routerSocket.send(JSON.stringify(listCode));
+      this.routerSocket.send(JSON.stringify([listCode, null]));
       this.routerSocket.on('message', (message) => {
         console.log('Received list from router');
         this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
         code_in_cloud = true;
       });
       return code_in_cloud;
+    }
+
+    updateCloudList(listCode) {
+      this.routerSocket.send(JSON.stringify([listCode, this.shopping_list.loadShoppingList(this.port)]));
     }
 
     changeCode(code) {
@@ -91,6 +95,7 @@ class Client {
       this.app.post('/merge-list', (req, res) => {
 
         this.searchCloudForList(this.code);
+        this.updateCloudList(this.code);
 
         res.json({ message: 'List merged successfully' });
       });
