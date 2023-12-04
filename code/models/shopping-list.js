@@ -50,6 +50,7 @@ class ShoppingList {
         const data = {
             listId: this.code,
             replicaId: fileName,
+            vectorClock: this.addWinSet.vectorClock,
             items: this.itemsList,
         };
     
@@ -87,6 +88,8 @@ class ShoppingList {
             this.addWinSet = this.addWinSet.add(itemData.name, itemData.desiredQuantity);
         }
 
+        this.addWinSet.vectorClock = data.vectorClock;
+
         return data;
     }
 
@@ -105,6 +108,7 @@ class ShoppingList {
         const newData = {
             listId: this.code,
             replicaId: fileName,
+            vectorClock: 0,
             items: {},
         };
 
@@ -119,6 +123,21 @@ class ShoppingList {
 
         const currentFilePath = __filename;
         const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
+
+        if (fs.existsSync(filePath)) {
+            this.loadShoppingList(port);
+
+            this.otherAddWinSet = new AddWinSet();
+            for (const itemName in data.items) {
+                const itemData = data.items[itemName];
+                this.otherAddWinSet = this.otherAddWinSet.add(itemData.name, itemData.desiredQuantity);
+            }
+            this.otherAddWinSet.vectorClock = data.vectorClock;
+
+            this.addWinSet = this.addWinSet.merge(this.otherAddWinSet);
+            this.storeShoppingList(port);
+            return null;
+        }
 
         // Write the new file with the empty data
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');

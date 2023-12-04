@@ -5,6 +5,24 @@ document.addEventListener("DOMContentLoaded", function() {
     const nameInput = document.getElementById("name");
     const desiredQuantityInput = document.getElementById("desired-quantity");
     const title = document.getElementById("title");
+    const mergeButton = document.getElementById("merge");
+
+    mergeButton.addEventListener("click", function() {
+        fetch('/merge-list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/shopping-list.html';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
 
     // Add an event listener for click
     title.addEventListener("click", function() {

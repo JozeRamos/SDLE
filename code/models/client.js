@@ -87,6 +87,13 @@ class Client {
         }
         res.json({ message: 'List code updated successfully' });
       });
+
+      this.app.post('/merge-list', (req, res) => {
+
+        this.searchCloudForList(this.code);
+
+        res.json({ message: 'List merged successfully' });
+      });
   
       this.app.get('/api/shopping-list', (req, res) => {
         if(!this.shopping_list.loadShoppingList(this.port)){

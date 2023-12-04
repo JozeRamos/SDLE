@@ -1,6 +1,7 @@
 {
   "listId": "example",
   "replicaId": "local_client_4002_list_example.json",
+  "vectorClock": 10,
   "items": [
     {
       "name": "banana",
@@ -9,6 +10,30 @@
     {
       "name": "fruta",
       "desiredQuantity": 24
+    },
+    {
+      "name": "mac",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "gagaaaaaa",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "hkkk",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "ioio",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "jhajkfba",
+      "desiredQuantity": 1
+    },
+    {
+      "name": "ola",
+      "desiredQuantity": 1
     },
     {
       "name": "pera",
@@ -36,30 +61,6 @@
     },
     {
       "name": "jj",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "mac",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "gagaaaaaa",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "hkkk",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "ioio",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "jhajkfba",
-      "desiredQuantity": 1
-    },
-    {
-      "name": "ola",
       "desiredQuantity": 1
     }
   ]

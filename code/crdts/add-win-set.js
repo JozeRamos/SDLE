@@ -43,15 +43,14 @@ class AddWinSet {
 
     const mergedElements = { ...this.elements };
 
-    for (const [item, quantity] of Object.entries(otherSet.elements)) {
-      if (mergedElements.hasOwnProperty(item)) {
+    for (const item in otherSet.elements) {
+      const quantity = otherSet.elements[item];
+      if (this.contains(item)) {
         if (quantity !== mergedElements[item] && otherSet.vectorClock > this.vectorClock) {
           mergedElements[item] = quantity;
         }
       } else {
-        if (!this.contains(item)) {
           mergedElements[item] = quantity;
-        }
       }
     }
 

@@ -1,7 +1,7 @@
 {
   "listId": "onePerReplica",
   "replicaId": "unique-replica-identifier",
-  "listName": "Shopping List Name",
+  "vectorClock": 5,
   "items": [
     {
       "name": "banana",
