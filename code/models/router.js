@@ -11,8 +11,21 @@ routerSocket.on('connection', (connection) => {
 
     // Handle messages from servers
     connection.on('message', (message) => {
-      if(JSON.parse(message) !== "List not found") {
-        console.log('Received list from server');
+      console.log(`Received message from server:`, JSON.parse(message));
+      
+      const { sender } = JSON.parse(message);
+      const { content } = JSON.parse(message);
+      
+      if (sender === "Cloud"){
+        if(content !== "List not found") {
+          console.log('Received list from server');
+          currentClient.send(message);
+        }
+      }
+      else if (sender === "Server"){
+        currentClient.send(message);
+      }
+      else if (sender === "Local"){
         currentClient.send(message);
       }
     });
@@ -34,12 +47,6 @@ routerSocket.on('connection', (connection) => {
     connection.on('message', (message) => {
       console.log(`Received message from client:`, JSON.parse(message));
       
-      const { sender } = JSON.parse(message);
-      const { content } = JSON.parse(message);
-
-      console.log(`Received message from client:`, sender, content);
-
-
       servers.forEach(serverConnection => {
         serverConnection.send(message);
       });

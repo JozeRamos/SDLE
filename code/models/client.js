@@ -24,6 +24,7 @@ class Client {
       this.app.listen(this.port, () => {
         console.log(`Client is running on http://localhost:${this.port}`);
         this.executeShoppingList();
+        this.executeMerge();
       });
 
       this.routerSocket.on('open', () => {
@@ -75,6 +76,45 @@ class Client {
       const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
       return fs.existsSync(filePath);
+    }
+
+    executeMerge(){      
+      this.app.post('/merge', (req, res) => {
+        console.log(req.body);
+        let server = [];
+        let consumption = [];
+        const { content } = req.body;
+        const exists = false;
+        
+        if (exists){
+          const msg = {
+            sender: 'Server',
+            content: `${content}`,
+          };
+          this.routerSocket.send(JSON.stringify(msg));  
+          this.routerSocket.on('message', (message) => {
+            const { content } = JSON.parse(message);
+            server.push(content);
+            console.log(server)
+            console.log(consumption)
+          });
+        }
+        else {
+          const msg = {
+            sender: 'Local',
+          };
+          this.routerSocket.send(JSON.stringify(msg));
+          this.routerSocket.on('message', (message) => {
+            
+            const { content } = JSON.parse(message);
+            const { port } = JSON.parse(message);
+            server.push(port);
+            consumption.push(content);
+            console.log(server)
+            console.log(consumption)
+          });
+        }
+      });
     }
   
     executeShoppingList() {

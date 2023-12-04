@@ -9,9 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //Add an event listener for click
     merge.addEventListener("click", async function() {
-        // Replace 'your_server_url' with the actual URL of your server
-        const serverUrl = 'ws://localhost:8080'; // Update the port if necessary
-        
+        // Replace 'your_server_url' with the actual URL of your server       
         
         // Message data
         let message;
@@ -28,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(data => {
                 message = {
-                    sender: 'Cloud',
                     content: `${data.code}`,
                 };
             })
@@ -36,51 +33,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error('Error fetching initial data:', error);
             });
             
-        let servers = []
-
-
-        try {
-            for (let i = 3000; i <= 3002; i++) {
-                const response = await fetch(`${serverUrl}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(message),
-                });
-    
-                const responseData = await response.json();
-    
-                console.log('Response from server:', responseData);
-    
-                if (responseData) {
-                    servers.push(i);
-                }
-            }            
-            if (servers.length == 0) {
-                message = {
-                    sender: 'Local',
-                    content: `${window.location.port}`,
-                };
-                for (let i = 3000; i <= 3002; i++) {
-                    const response = await fetch(`${serverUrl}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(message),
-                    });
-    
-                    const responseData = await response.json();
-                    
-                    console.log('Response from server:', responseData);
-                    servers.push({ key: i, value: responseData });
-                }
-            }
-        } catch (error) {
-            console.error('Error sending request:', error.message);
-        }
-        console.log(servers)
+        
+        // Send a POST request to update the JSON file on the server
+        fetch('/merge', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(message),
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
     
 
