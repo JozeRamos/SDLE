@@ -31,19 +31,21 @@ class Client {
       });
     }
 
-    searchCloudForList(listCode) {
+    async searchCloudForList(listCode) {
       var code_in_cloud = false;
+      console.log('Searching for list : ', listCode ,' : in cloud');
       this.routerSocket.send(JSON.stringify([listCode, null]));
       this.routerSocket.on('message', (message) => {
-        console.log('Received list from router');
+        console.log('List found. Received desired list from router');
         this.shopping_list.pullShoppingList(this.port,JSON.parse(message));
         code_in_cloud = true;
       });
       return code_in_cloud;
     }
 
-    updateCloudList(listCode) {
+    async updateCloudList(listCode) {
       this.routerSocket.send(JSON.stringify([listCode, this.shopping_list.loadShoppingList(this.port)]));
+      console.log('Sent updated list : ', listCode ,' : to router')
     }
 
     changeCode(code) {
@@ -62,7 +64,7 @@ class Client {
         for (let i = 0; i < codeLength; i++) {
           newCode += characters.charAt(Math.floor(Math.random() * characters.length));
         }
-      } while (this.codeExistsLocally(newCode) || this.searchCloudForList(newCode));
+      } while (this.codeExistsLocally(newCode));
 
       this.code = newCode;
       this.shopping_list.code = newCode;
@@ -92,10 +94,10 @@ class Client {
         res.json({ message: 'List code updated successfully' });
       });
 
-      this.app.post('/merge-list', (req, res) => {
-
-        this.searchCloudForList(this.code);
-        this.updateCloudList(this.code);
+      this.app.post('/merge-list', async (req, res) => {
+        // wait for the list to be found in the cloud before merging
+        await this.searchCloudForList(this.code);
+        await this.updateCloudList(this.code);
 
         res.json({ message: 'List merged successfully' });
       });

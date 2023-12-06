@@ -18,7 +18,14 @@ class Server {
 
     this.routerSocket.on('open', () => {
       console.log('Connected to router');
-      this.routerSocket.send(JSON.stringify(this.listCounter()));
+      // get the list codes of all the list in the server and send it to the router
+      const folderName = `/shopping-lists/cloud/server${Math.abs(this.port) % 10}/`;
+      const files = fs.readdirSync(path.join(__dirname, '..', folderName));
+      const listCodes = files.map((file) => {
+        const match = file.match(/^server_\d+_list_(.+)\.json$/);
+        return match ? match[1] : '';
+      });
+      this.routerSocket.send(JSON.stringify([this.listCounter(),listCodes]));
     });
 
     this.app.get('/', (req, res) => {
@@ -55,7 +62,7 @@ class Server {
 
 
         if(clientMessage[1]) {
-          console.log('Received list from router:', clientMessage[0]);
+          console.log('Received list from router, storing it in the server');
 
           if (!fs.existsSync(path.join(path.dirname(currentFilePath), '..', folderName))) {
             fs.mkdirSync(path.join(path.dirname(currentFilePath), '..', folderName));
@@ -68,12 +75,14 @@ class Server {
         }
 
         // Handle messages from the router if needed
-        console.log('Received message from router:', clientMessage[0]);
+        console.log('Received list code from router :', clientMessage[0], ': searching for list in server');
 
         if(fs.existsSync(filePath)) {
           this.routerSocket.send(fs.readFileSync(filePath, 'utf8'));
+          console.log('List found in server, forwarding to router');
         } else {
           this.routerSocket.send(JSON.stringify("List not found"));
+          console.log('List not found in server, warning router');
         }
 
       });
