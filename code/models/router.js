@@ -20,19 +20,22 @@ routerSocket.on('connection', (connection) => {
     connection.on('message', (message) => {
 
       if(isInt(JSON.parse(message)[0])) {
-        console.log('Populating listServersInfo and servers');
+        console.log(`Populating listServersInfo and servers with information from ${connection.protocol}`);
         servers.set(connection.protocol, [connection, JSON.parse(message)[0]]);
-        if(listServersInfo.get(JSON.parse(message)[0])) {
-          // if the list is in the listServersInfo, populate the missing value with the server
-          if(listServersInfo.get(JSON.parse(message)[0])[0]==null) {
-            listServersInfo.get(JSON.parse(message)[0])[0] = connection.protocol;
-          } else if(listServersInfo.get(JSON.parse(message)[0])[1]==null) {
-            listServersInfo.get(JSON.parse(message)[0])[1] = connection.protocol;
+
+        JSON.parse(message)[1].forEach(element => {
+          if(listServersInfo.get(element)) {
+            // if the list is in the listServersInfo, populate the missing value with the server
+            if(listServersInfo.get(element)[0]==null) {
+              listServersInfo.get(element)[0] = connection.protocol;
+            } else if(listServersInfo.get(element)[1]==null) {
+              listServersInfo.get(element)[1] = connection.protocol;
+            }
+          } else {
+            // if the list is not in the listServersInfo, add the list to the listServersInfo
+              listServersInfo.set(element, [connection.protocol, null]);
           }
-        } else {
-          // if the list is not in the listServersInfo, add the list to the listServersInfo
-          listServersInfo.set(JSON.parse(message)[0], [connection.protocol, null]);
-        }
+        });
       }
       else if(JSON.parse(message) !== "List not found") {
         console.log(`Received desired list from ${connection.protocol}, forwarding to client`);
@@ -80,7 +83,7 @@ routerSocket.on('connection', (connection) => {
           // update server list count
           servers.get(listServersInfo.get(JSON.parse(message)[0])[0])[1]++;
           servers.get(listServersInfo.get(JSON.parse(message)[0])[1])[1]++;
-          
+
         } else {
           console.log('Received list code : ', JSON.parse(message)[0] ,' : from client');
           console.log('Searching for list in corresponding servers:', listServersInfo.get(JSON.parse(message)[0]));
