@@ -4,11 +4,13 @@ const path = require('path');
 const fs = require('fs');
 const WebSocket = require('ws');
 
+
 class Server {
   constructor(port) {
     this.app = express();
     this.port = port;
-    this.routerSocket = new WebSocket('ws://localhost:8080', 'server'); // Connect to the router
+    const serverNum = Math.abs(this.port) % 10;
+    this.routerSocket = new WebSocket('ws://localhost:8080', `server${serverNum}`); // Connect to the router
   }
 
   async init() {
@@ -16,11 +18,13 @@ class Server {
 
     this.routerSocket.on('open', () => {
       console.log('Connected to router');
+      this.routerSocket.send(JSON.stringify(this.listCounter()));
     });
 
     this.app.get('/', (req, res) => {
       const serverNum = Math.abs(this.port) % 10;
       const folderName = `/shopping-lists/cloud/server${serverNum}/`;
+
     
       fs.readdir(path.join(__dirname, '..', folderName), (err, files) => {
         if (err) {
@@ -35,6 +39,7 @@ class Server {
         }
       });
     });
+
     
 
     this.app.listen(this.port, () => {
@@ -75,6 +80,24 @@ class Server {
 
     });
   }
+
+  // get number of lists in server
+  listCounter() {
+    const serverNum = Math.abs(this.port) % 10;
+    const folderName = `shopping-lists/cloud/server${serverNum}/`;
+  
+    try {
+      const files = fs.readdirSync(path.join(__dirname, '..', folderName));
+      const listCount = files.length;
+      return listCount;
+    } catch (err) {
+      console.error('Error reading directory:', err);
+      // Handle the error if needed
+      return 0; // or any default value
+    }
+  }
+
+  
 }
 
 module.exports = Server;

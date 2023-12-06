@@ -1,7 +1,7 @@
 {
   "listId": "example",
   "replicaId": "local_client_4002_list_example.json",
-  "vectorClock": 28,
+  "vectorClock": 29,
   "items": [
     {
       "name": "banana",
