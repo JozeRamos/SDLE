@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 for (const itemName in data.itemsList) {
                     const quantity = data.itemsList[itemName];
-                    createListItem(itemName, quantity);
+                    if(quantity>0){createListItem(itemName, quantity);}
                 }
             })
             .catch(error => {

@@ -53,10 +53,10 @@ routerSocket.on('connection', (connection) => {
     // ...
   } else if (connection.protocol === 'client') {
     console.log(`Client connected`);
-    currentClient = connection;
 
     // Handle messages from clients
     connection.on('message', (message) => {
+      currentClient = connection;
 
       if(!listServersInfo.get(JSON.parse(message)[0])) {
         // select the servers with the least list count
