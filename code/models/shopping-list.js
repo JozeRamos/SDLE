@@ -1,66 +1,26 @@
 const path = require('path');
 const fs = require('fs');
-const Item = require('./item.js');
-const AddWinSet = require('../crdts/add-win-set.js');
+const SetWithCounters = require('../crdts/set-with-counters.js');
 
 class ShoppingList {
-    constructor(code, initialList) {
+    constructor(code) {
         this.code = code;
-        this.itemsList = initialList;
-        this.addWinSet = new AddWinSet();
-    }
-
-    // addItem(item) {
-    //     if(item.desiredQuantity==0) {
-    //         this.removeItem(item);
-    //         return;
-    //     }
-
-    //     // Check if an item with the same name already exists in the list
-    //     for (const i in this.itemsList) {
-    //         if (this.itemsList[i].name === item.name) {
-    //             this.itemsList[i].changeDesiredQuantity(item.desiredQuantity);
-    //             return;
-    //         }
-    //     }
-    //     this.itemsList.push(item);
-    // }
-    
-
-    // removeItem(item) {
-    //     this.itemsList = this.itemsList.filter((i) => i.name !== item.name);
-    // }
-
-    createList(elements) {
-        this.itemsList = [];
-        for (const itemName in elements) {
-            const quantity = elements[itemName];
-            const newItem = new Item(itemName, quantity);
-            this.itemsList.push(newItem);
-        }
+        this.setWithCounters = new SetWithCounters();
     }
 
     storeShoppingList(port) {
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
-
-        this.createList(this.addWinSet.elements);
     
         // Include initial lines
         const data = {
             listId: this.code,
             replicaId: fileName,
-            vectorClock: this.addWinSet.vectorClock,
-            items: this.itemsList,
+            items: this.setWithCounters.elements,
         };
     
         const currentFilePath = __filename;
         const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
-    
-        // Make sure the folder exists, create if not
-        /*if (!fs.existsSync(path.join('..', folderName))) {
-            fs.mkdirSync(path.join('..', folderName));
-        }*/
             
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
         // console.log(`Shopping list stored in ${filePath}`);
@@ -68,7 +28,8 @@ class ShoppingList {
     
 
     loadShoppingList(port) {
-        this.addWinSet = new AddWinSet();
+        this.setWithCounters = new SetWithCounters();
+
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
         const currentFilePath = __filename;
@@ -83,18 +44,15 @@ class ShoppingList {
 
         for (const itemName in data.items) {
             const itemData = data.items[itemName];
-            // const newItem = new Item(itemData.name, itemData.desiredQuantity);
-            // this.addItem(newItem);
-            this.addWinSet = this.addWinSet.add(itemData.name, itemData.desiredQuantity);
+            this.setWithCounters = this.setWithCounters.add(itemName, itemData.add);
+            this.setWithCounters = this.setWithCounters.remove(itemName, itemData.remove);
         }
-
-        this.addWinSet.vectorClock = data.vectorClock;
 
         return data;
     }
 
     createShoppingList(port) {
-        this.itemsList = [];
+        this.setWithCounters = new SetWithCounters();
 
         const folderName = 'shopping-lists/local/';
         const fileName = `local_client_${port}_list_${this.code}.json`;
@@ -108,7 +66,6 @@ class ShoppingList {
         const newData = {
             listId: this.code,
             replicaId: fileName,
-            vectorClock: 0,
             items: {},
         };
 
@@ -125,16 +82,18 @@ class ShoppingList {
         const filePath = path.join(path.dirname(currentFilePath), '..', folderName, fileName);
 
         if (fs.existsSync(filePath)) {
+
             this.loadShoppingList(port);
 
-            this.otherAddWinSet = new AddWinSet();
+            this.otherSetWithCounters = new SetWithCounters();
             for (const itemName in data.items) {
                 const itemData = data.items[itemName];
-                this.otherAddWinSet = this.otherAddWinSet.add(itemData.name, itemData.desiredQuantity);
+                this.otherSetWithCounters = this.otherSetWithCounters.add(itemName, itemData.add);
+                this.otherSetWithCounters = this.otherSetWithCounters.remove(itemName, itemData.remove);
             }
-            this.otherAddWinSet.vectorClock = data.vectorClock;
+            
+            this.setWithCounters = this.setWithCounters.merge(this.otherSetWithCounters);
 
-            this.addWinSet = this.addWinSet.merge(this.otherAddWinSet);
             this.storeShoppingList(port);
             return null;
         }

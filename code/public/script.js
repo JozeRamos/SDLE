@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 title.textContent = `Shopping List ${data.code}`;
 
                 for (const itemName in data.itemsList) {
-                    const quantity = data.itemsList[itemName];
+                    const quantity = data.itemsList[itemName]["add"] - data.itemsList[itemName]["remove"];
                     if(quantity>0){createListItem(itemName, quantity);}
                 }
             })

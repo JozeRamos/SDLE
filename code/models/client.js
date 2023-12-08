@@ -12,7 +12,7 @@ class Client {
       this.app = express();
       this.port = port;
       this.code = code;
-      this.shopping_list =  new ShoppingList(code, []);
+      this.shopping_list =  new ShoppingList(code);
       this.routerSocket = new WebSocket('ws://localhost:8080', 'client'); // Connect to the router
     }
 
@@ -51,7 +51,7 @@ class Client {
     changeCode(code) {
         this.code = code;
         this.shopping_list.code = code;
-        this.shopping_list =  new ShoppingList(code, []);
+        this.shopping_list =  new ShoppingList(code);
     }
 
     createRandomCode() {
@@ -109,7 +109,7 @@ class Client {
         else {
           const response = {
             code: this.code,
-            itemsList: this.shopping_list.addWinSet.elements,
+            itemsList: this.shopping_list.setWithCounters.elements,
         };
         res.json(response);
         }
@@ -117,13 +117,12 @@ class Client {
   
       // Inside your '/update-list' route
       this.app.post('/update-list', (req, res) => {
-          // this.shopping_list.addItem(new Item(res.req.body.name,res.req.body.desiredQuantity));
 
           if(req.body.quantityDifference > 0) {
-            this.shopping_list.addWinSet = this.shopping_list.addWinSet.add(req.body.name, req.body.quantityDifference);
+            this.shopping_list.setWithCounters = this.shopping_list.setWithCounters.add(req.body.name, req.body.quantityDifference);
           }
           if(req.body.quantityDifference < 0) {
-            this.shopping_list.addWinSet = this.shopping_list.addWinSet.remove(req.body.name, -req.body.quantityDifference);
+            this.shopping_list.setWithCounters = this.shopping_list.setWithCounters.remove(req.body.name, -req.body.quantityDifference);
           }
           
           this.shopping_list.storeShoppingList(this.port);

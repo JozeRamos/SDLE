@@ -38,7 +38,7 @@ class SetWithCounters {
     const newSet = new SetWithCounters({ ...this.elements });
   
     if (newSet.contains(item)) {
-      newSet.elements[item].remove += quantityToRemove;
+      newSet.elements[item]["remove"] += quantityToRemove;
     }
   
     return newSet;
