@@ -25,6 +25,10 @@
     "bread": {
       "add": 10,
       "remove": 3
+    },
+    "kiwi": {
+      "add": 42,
+      "remove": 11
     }
   }
 }

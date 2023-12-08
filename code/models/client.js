@@ -12,6 +12,8 @@ class Client {
       this.port = port;
       this.code = code;
       this.shopping_list =  new ShoppingList(code);
+      this.routerSocket = null;
+      this.routerConnected = false;
     }
 
     async init() {
@@ -22,25 +24,43 @@ class Client {
       this.app.listen(this.port, () => {
         console.log(`Client is running on http://localhost:${this.port}`);
         this.executeShoppingList();
+        if(!this.routerConnected) this.connectToRouter();
       });
-
-      try {
-        this.routerSocket = new WebSocket('ws://localhost:8080', 'client');
-      
-        this.routerSocket.on('open', () => {
-          console.log('Connected to router');
-        });
-      
-        this.routerSocket.on('error', (error) => {
-          console.error('Error connecting to router. Router offline');
-          this.routerSocket = null;
-        });
-      } catch (error) {
-        console.error('Error connecting to router. Router offline');
-        this.routerSocket = null;
-      }
-      
     }
+
+    async connectToRouter() {
+    
+      const tryConnect = async () => {
+        try {
+          this.routerSocket = new WebSocket('ws://localhost:8080', 'client');
+    
+          this.routerSocket.on('open', () => {
+            console.log('Connected to router');
+            this.routerConnected = true;
+          });
+    
+          this.routerSocket.on('error', (error) => {
+            console.error('Error connecting to router. Router offline. Retrying in 10 seconds');
+            this.routerSocket = null;
+            this.routerConnected = false;
+          });
+        } catch (error) {
+          console.error('Error connecting to router. Router offline. Retrying in 10 seconds');
+          this.routerSocket = null;
+          this.routerConnected = false;
+        }
+    
+        if (!this.routerConnected) {
+          // Retry after a delay (e.g., 5 seconds)
+          await new Promise(resolve => setTimeout(resolve, 10000));
+          await tryConnect();
+        }
+      };
+    
+      await tryConnect();
+    }
+    
+    
 
     async searchCloudForList(listCode) {
       var code_in_cloud = false;
@@ -95,7 +115,11 @@ class Client {
         this.changeCode(req.body.code);
 
         if(!this.codeExistsLocally(req.body.code) && req.body.code) {
-          this.searchCloudForList(req.body.code);
+          if(this.routerConnected) {
+            this.searchCloudForList(req.body.code);
+          } else {
+            console.log('Router offline. Unable to search list in cloud');
+          }
         }
 
         if (req.body.message === "new list") {
@@ -107,8 +131,13 @@ class Client {
 
       this.app.post('/merge-list', async (req, res) => {
         // wait for the list to be found in the cloud before merging
-        await this.searchCloudForList(this.code);
-        await this.updateCloudList(this.code);
+
+        if(this.routerConnected){
+          await this.searchCloudForList(this.code);
+          await this.updateCloudList(this.code);
+        } else {
+          console.log('Router offline. List not merged');
+        }
 
         res.json({ message: 'List merged successfully' });
       });
