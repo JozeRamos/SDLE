@@ -72,17 +72,25 @@ routerSocket.on('connection', (connection) => {
       if(listServersInfo.get(JSON.parse(message)[0])) {
         // send message to servers
         if(listServersInfo.get(JSON.parse(message)[0])[0]!=null) {
-          servers.get(listServersInfo.get(JSON.parse(message)[0])[0])[0].send(message);
+          if(servers.get(listServersInfo.get(JSON.parse(message)[0])[0])) {
+            servers.get(listServersInfo.get(JSON.parse(message)[0])[0])[0].send(message);
+          }
         }
         if(listServersInfo.get(JSON.parse(message)[0])[1]!=null) {
-          servers.get(listServersInfo.get(JSON.parse(message)[0])[1])[0].send(message);
+          if(servers.get(listServersInfo.get(JSON.parse(message)[0])[1])) {
+            servers.get(listServersInfo.get(JSON.parse(message)[0])[1])[0].send(message);
+          }
         }
         if(JSON.parse(message)[1]) {
           console.log('Received list : ', JSON.parse(message)[0] ,' : from client');
           console.log('Pushing list to corresponding servers:', listServersInfo.get(JSON.parse(message)[0]));
           // update server list count
-          servers.get(listServersInfo.get(JSON.parse(message)[0])[0])[1]++;
-          servers.get(listServersInfo.get(JSON.parse(message)[0])[1])[1]++;
+          if(servers.get(listServersInfo.get(JSON.parse(message)[0])[0])) {
+            servers.get(listServersInfo.get(JSON.parse(message)[0])[0])[1]++;
+          }
+          if(servers.get(listServersInfo.get(JSON.parse(message)[0])[1])){
+            servers.get(listServersInfo.get(JSON.parse(message)[0])[1])[1]++;
+          }
 
         } else {
           console.log('Received list code : ', JSON.parse(message)[0] ,' : from client');

@@ -4,10 +4,10 @@
   "items": {
     "banana": {
       "add": 7,
-      "remove": 3
+      "remove": 7
     },
     "grape": {
-      "add": 5,
+      "add": 8,
       "remove": 1
     },
     "orange": {
@@ -15,20 +15,20 @@
       "remove": 1
     },
     "watermelon": {
-      "add": 6,
-      "remove": 2
+      "add": 10,
+      "remove": 5
     },
     "apple": {
       "add": 4,
       "remove": 1
     },
     "bread": {
-      "add": 10,
-      "remove": 3
+      "add": 11,
+      "remove": 6
     },
-    "kiwi": {
-      "add": 42,
-      "remove": 11
+    "teste": {
+      "add": 12,
+      "remove": 0
     }
   }
 }
