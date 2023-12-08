@@ -6,14 +6,14 @@ class AddWinSet {
     this.vectorClock = vectorClock;
   }
 
-  add(item, quantity) {
+  add(item, quantityToAdd = 1) {
     const updatedVectorClock = this.vectorClock + 1;
     const newSet = new AddWinSet({ ...this.elements }, updatedVectorClock);
 
     if (newSet.contains(item)) {
-      newSet.elements[item] += quantity;
+      newSet.elements[item] += quantityToAdd;
     } else {
-      newSet.elements[item] = quantity;
+      newSet.elements[item] = quantityToAdd;
     }
 
     return newSet;
