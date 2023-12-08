@@ -5,7 +5,6 @@ const fs = require('fs');
 const ShoppingList = require('./shopping-list.js');
 
 const WebSocket = require('ws');
-const { resourceUsage } = require('process');
 
 class Client {
     constructor(port, code) {
@@ -13,7 +12,6 @@ class Client {
       this.port = port;
       this.code = code;
       this.shopping_list =  new ShoppingList(code);
-      this.routerSocket = new WebSocket('ws://localhost:8080', 'client'); // Connect to the router
     }
 
     async init() {
@@ -26,9 +24,22 @@ class Client {
         this.executeShoppingList();
       });
 
-      this.routerSocket.on('open', () => {
-        console.log('Connected to router');
-      });
+      try {
+        this.routerSocket = new WebSocket('ws://localhost:8080', 'client');
+      
+        this.routerSocket.on('open', () => {
+          console.log('Connected to router');
+        });
+      
+        this.routerSocket.on('error', (error) => {
+          console.error('Error connecting to router. Router offline');
+          this.routerSocket = null;
+        });
+      } catch (error) {
+        console.error('Error connecting to router. Router offline');
+        this.routerSocket = null;
+      }
+      
     }
 
     async searchCloudForList(listCode) {
