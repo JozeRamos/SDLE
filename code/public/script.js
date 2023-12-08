@@ -142,6 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // Append the span and buttons to the list item
+        quantitySpan.textContent += ") ";
         listItem.appendChild(quantitySpan);
         listItem.appendChild(increaseButton);
         listItem.appendChild(decreaseButton);
