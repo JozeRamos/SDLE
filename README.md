@@ -20,7 +20,7 @@ npm install
 ```
 
 #### Run the project
-To run the project, you need 3 terminals for 3 servers (this can be scalable as desired), 1 terminal for the router (this can also be scalable as desired, but needs code changes), and 1 terminal for each client. In the server and client commands you need to specify the port as argument. Remember to change to the directory ```/code``` of the project before running the following commands. Run the following commands in the order specified below.
+To run the project, you need 3 terminals for 3 servers (this can be scalable as desired), 1 terminal for the router (this can also be scalable as desired, but needs code changes), and 1 terminal for each client. In the server and client commands you need to specify the port as argument. Remember to change to the directory ```/code``` of the project before running the following commands.
 
 ##### Router - 1st terminal
 ```bash
@@ -47,6 +47,9 @@ node client-handler.js 4001
 ```bash
 node client-handler.js 4002
 ```
+
+**Note**
+The Client can be launched independently from the router and the servers. The client will try to connect to the router, and if it is not available, it will try to connect every 10 seconds. The client will also try to reconnect to the router/server if the connection is lost.
 
 ---
 
