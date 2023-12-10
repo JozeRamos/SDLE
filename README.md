@@ -55,4 +55,6 @@ The Client can be launched independently from the router and the servers. The cl
 
 ### Project Result and Functionality
 
-add images of the project here
+**Video demo:**
+
+[![Demo Video](/docs/cover.png)](/docs/demo/demo.mp4)
