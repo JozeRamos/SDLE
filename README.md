@@ -1,6 +1,6 @@
 # SDLE - Large Scale Distributed Systems 2023/24
 
-## Local-First Shoopping List Application
+## Local-First Shopping List Application
 
 ### Project Description
 This project aims to develop a local-first shopping list application, that offers a seamless user experience with the ability to create and manage shopping lists, while ensuring data persistence and high availability. The application operates on a two-tier architecture: the user's device and a cloud component. Users can create shopping lists with a unique identifier and share these lists with others. The application allows multiple users to modify lists concurrently, and it provides features like adding/removing items and setting target quantities.
